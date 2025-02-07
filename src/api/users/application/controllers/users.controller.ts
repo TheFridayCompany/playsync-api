@@ -1,10 +1,22 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Inject,
+  Param,
+  Post,
+} from '@nestjs/common';
 import { UsersService } from '../../domain/services/users.service';
 import CreateUserDto from '../dto/create-user.dto';
+import { UsersSymbols } from '../../symbols';
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    @Inject(UsersSymbols.USERS_SERVICE)
+    private readonly usersService: UsersService,
+  ) {}
 
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
