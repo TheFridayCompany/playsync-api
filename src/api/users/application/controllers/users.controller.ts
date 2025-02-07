@@ -27,11 +27,11 @@ export class UsersController {
 
   @Get(':id')
   getUser(@Param('id') id: string) {
-    return `This action returns a #${id} user`;
+    return this.usersService.getUser(id);
   }
 
   @Delete(':id')
   deleteUser(@Param('id') id: string) {
-    return `This action removes a #${id} user`;
+    return this.usersService.deleteUser(id);
   }
 }
