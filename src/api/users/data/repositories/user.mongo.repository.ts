@@ -65,7 +65,7 @@ export class UserMongooseRepository implements IRepository<User> {
 
   private throwErrorIfInvalidObjectId(id: string) {
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new InvalidObjectIdError('Invalid ObjectId');
+      throw new InvalidObjectIdError('Invalid User Id');
     }
   }
 
