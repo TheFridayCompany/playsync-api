@@ -4,6 +4,7 @@ import IRepository from 'src/common/interfaces/repository.interface';
 import { IUniqueIdService } from 'src/common/interfaces/unique-id.service.interface';
 import { User } from '../models/user.model';
 import { SYMBOLS } from 'src/common/symbols';
+import { UserNotFoundError } from 'src/common/errors/user-not-found.error';
 
 describe('UsersService', () => {
   let service: UsersService;
@@ -42,6 +43,43 @@ describe('UsersService', () => {
 
   it('should be defined', () => {
     expect(service).toBeDefined();
+  });
+
+  it('should retrieve a user by ID', async () => {
+    const id = 'user-id';
+    const username = 'testuser';
+    const name = 'Test User';
+    const user = new User(id, username, name);
+
+    (userRepositoryMock.findOne as jest.Mock).mockResolvedValue(user);
+
+    const result = await service.getUser(id);
+
+    expect(userRepositoryMock.findOne).toHaveBeenCalledWith(id);
+    expect(result).toEqual(user);
+  });
+
+  it('should throw an error if user is not found', async () => {
+    (userRepositoryMock.findOne as jest.Mock).mockResolvedValue(null);
+
+    await expect(service.getUser('non-existing-id')).rejects.toThrow(
+      UserNotFoundError,
+    );
+  });
+
+  it('should delete a user by ID', async () => {
+    (userRepositoryMock.delete as jest.Mock).mockResolvedValue(true);
+
+    await expect(service.deleteUser('user-id')).resolves.toBeUndefined();
+    expect(userRepositoryMock.delete).toHaveBeenCalledWith('user-id');
+  });
+
+  it('should throw an error if trying to delete a non-existing user', async () => {
+    (userRepositoryMock.delete as jest.Mock).mockResolvedValue(false);
+
+    await expect(service.deleteUser('non-existing-id')).rejects.toThrow(
+      UserNotFoundError,
+    );
   });
 
   it('should create a new user with a unique ID', async () => {
