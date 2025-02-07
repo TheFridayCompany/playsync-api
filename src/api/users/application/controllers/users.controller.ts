@@ -8,8 +8,9 @@ import {
   Post,
 } from '@nestjs/common';
 import CreateUserDto from '../dto/create-user.dto';
-import { UsersSymbols } from '../../symbols';
+import { UsersSymbols } from '../../users.symbols';
 import { IUsersService } from '../interfaces/users.service.interface';
+import { User } from '../../domain/models/user.model';
 
 @Controller('users')
 export class UsersController {
@@ -20,7 +21,9 @@ export class UsersController {
 
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+    const { username, name } = createUserDto;
+
+    return this.usersService.createUser(username, name);
   }
 
   @Get(':id')
