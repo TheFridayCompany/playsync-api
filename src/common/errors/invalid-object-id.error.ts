@@ -1,10 +1,10 @@
 export class InvalidObjectIdError extends Error {
   statusCode: number;
 
-  constructor(message: string = 'User not found') {
+  constructor(message: string = 'Invalid Object ID') {
     super(message);
-    this.name = 'UserNotFoundError';
-    this.statusCode = 404; // HTTP Status Code for "Not Found"
+    this.name = 'InvalidObjectIdError';
+    this.statusCode = 400; // HTTP Status Code for "Bad Request"
 
     // Ensuring that the prototype chain is set correctly
     Object.setPrototypeOf(this, new.target.prototype);
