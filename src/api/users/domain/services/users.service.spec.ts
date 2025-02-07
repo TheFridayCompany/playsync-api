@@ -1,10 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersService } from './users.service';
 import IRepository from 'src/common/interfaces/repository.interface';
-import { CommonSymbols } from 'src/common/symbols';
 import { IUniqueIdService } from 'src/common/interfaces/unique-id.service.interface';
-import { UsersSymbols } from '../../users.symbols';
 import { User } from '../models/user.model';
+import { SYMBOLS } from 'src/common/symbols';
 
 describe('UsersService', () => {
   let service: UsersService;
@@ -28,11 +27,11 @@ describe('UsersService', () => {
       providers: [
         UsersService,
         {
-          provide: UsersSymbols.USERS_REPOSITORY,
+          provide: SYMBOLS.USERS_REPOSITORY,
           useValue: userRepositoryMock,
         },
         {
-          provide: CommonSymbols.UUID_SERVICE,
+          provide: SYMBOLS.UUID_SERVICE,
           useValue: uniqueIdServiceMock,
         },
       ],
