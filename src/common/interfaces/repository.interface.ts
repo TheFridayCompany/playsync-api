@@ -24,12 +24,12 @@ export default interface IRepository<T> {
   findAll(): Promise<T[]>;
 
   /**
-   * Updates an existing entity by ID.
+   * Updates an existing entity by ID and returns the updated object.
    * @param id The ID of the entity to update.
    * @param data The updated entity data.
-   * @returns The updated entity if successful, otherwise `null`.
+   * @returns The updated entity if found, otherwise `null`.
    * @throws {InvalidObjectIdError} If the provided ID is not a valid ObjectId.
-   * @throws {Error} If the entity does not exist or update fails.
+   * @throws {Error} If there is a database issue.
    */
   update(id: string, data: T): Promise<T | null>;
 
