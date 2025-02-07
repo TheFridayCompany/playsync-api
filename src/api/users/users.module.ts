@@ -14,12 +14,12 @@ import { UsersSymbols } from './symbols';
   ],
   controllers: [UsersController],
   providers: [
-    UsersService,
     {
       provide: UsersSymbols.USERS_REPOSITORY,
       useClass: UserMongooseRepository,
     },
+    { provide: UsersSymbols.USERS_SERVICE, useClass: UsersService },
   ],
-  exports: [UsersService],
+  exports: [{ provide: UsersSymbols.USERS_SERVICE, useClass: UsersService }],
 })
 export class UsersModule {}

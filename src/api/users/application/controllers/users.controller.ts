@@ -7,15 +7,15 @@ import {
   Param,
   Post,
 } from '@nestjs/common';
-import { UsersService } from '../../domain/services/users.service';
 import CreateUserDto from '../dto/create-user.dto';
 import { UsersSymbols } from '../../symbols';
+import { IUsersService } from '../interfaces/users.service.interface';
 
 @Controller('users')
 export class UsersController {
   constructor(
     @Inject(UsersSymbols.USERS_SERVICE)
-    private readonly usersService: UsersService,
+    private readonly usersService: IUsersService,
   ) {}
 
   @Post()
