@@ -8,14 +8,13 @@ import {
   Post,
 } from '@nestjs/common';
 import CreateUserDto from '../dto/create-user.dto';
-import { UsersSymbols } from '../../users.symbols';
 import { IUsersService } from '../interfaces/users.service.interface';
-import { User } from '../../domain/models/user.model';
+import { SYMBOLS } from 'src/common/symbols';
 
 @Controller('users')
 export class UsersController {
   constructor(
-    @Inject(UsersSymbols.USERS_SERVICE)
+    @Inject(SYMBOLS.USERS_SERVICE)
     private readonly usersService: IUsersService,
   ) {}
 

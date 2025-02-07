@@ -1,17 +1,16 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { User } from '../models/user.model';
 import { IUsersService } from '../../application/interfaces/users.service.interface';
-import { UsersSymbols } from '../../users.symbols';
-import { CommonSymbols } from 'src/common/common.symbols';
 import IRepository from 'src/common/interfaces/repository.interface';
 import { IUniqueIdService } from 'src/common/interfaces/unique-id.service.interface';
+import { SYMBOLS } from 'src/common/symbols';
 
 @Injectable()
 export class UsersService implements IUsersService {
   constructor(
-    @Inject(UsersSymbols.USERS_REPOSITORY)
+    @Inject(SYMBOLS.USERS_REPOSITORY)
     private readonly userRepository: IRepository<User>,
-    @Inject(CommonSymbols.UUID_SERVICE)
+    @Inject(SYMBOLS.UUID_SERVICE)
     private readonly uniqueIdService: IUniqueIdService,
   ) {}
 

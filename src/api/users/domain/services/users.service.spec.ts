@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersService } from './users.service';
 import IRepository from 'src/common/interfaces/repository.interface';
-import { CommonSymbols } from 'src/common/common.symbols';
+import { CommonSymbols } from 'src/common/symbols';
 import { IUniqueIdService } from 'src/common/interfaces/unique-id.service.interface';
 import { UsersSymbols } from '../../users.symbols';
 import { User } from '../models/user.model';
@@ -12,7 +12,6 @@ describe('UsersService', () => {
   let uniqueIdServiceMock: IUniqueIdService;
 
   beforeEach(async () => {
-    // Create mock implementations
     userRepositoryMock = {
       create: jest.fn(),
       findOne: jest.fn(),
@@ -77,7 +76,7 @@ describe('UsersService', () => {
     );
 
     // Call the service method and assert it throws an error
-    await expect(service.createUser(username, name)).rejects.toThrowError(
+    await expect(service.createUser(username, name)).rejects.toThrow(
       'Username already taken',
     );
   });

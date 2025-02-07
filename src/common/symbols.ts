@@ -1,4 +1,5 @@
-export enum UsersSymbols {
+export enum SYMBOLS {
+  UUID_SERVICE = 'UUID_SERVICE',
   USERS_SERVICE = 'USERS_SERVICE',
   USERS_REPOSITORY = 'USERS_REPOSITORY',
   USER_SCHEMA = 'UserSchema',
