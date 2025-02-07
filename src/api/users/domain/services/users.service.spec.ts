@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersService } from './users.service';
-import { IUniqueIdService } from '../../../../common/interfaces/unique-id.service.interface';
-import { User } from '../models/user.model';
+import IRepository from 'src/common/interfaces/repository.interface';
+import { CommonSymbols } from 'src/common/common.symbols';
+import { IUniqueIdService } from 'src/common/interfaces/unique-id.service.interface';
 import { UsersSymbols } from '../../users.symbols';
-import { CommonSymbols } from '../../../../common/common.symbols';
-import IRepository from '../../../../common/interfaces/repository.interface';
+import { User } from '../models/user.model';
 
 describe('UsersService', () => {
   let service: UsersService;
