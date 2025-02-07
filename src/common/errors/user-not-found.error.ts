@@ -1,8 +1,8 @@
 export class UserNotFoundError extends Error {
   statusCode: number;
 
-  constructor(message: string = 'User not found') {
-    super(message);
+  constructor(id?: string, message: string = 'User not found') {
+    super(id ? `User with id ${id} not found` : 'User not found');
     this.name = 'UserNotFoundError';
     this.statusCode = 404; // HTTP Status Code for "Not Found"
 
