@@ -1,12 +1,7 @@
-export class UserNotFoundError extends Error {
-  statusCode: number;
+import { DomainError } from 'src/common/errors/domain.error'; // Import the base class
 
+export class UserNotFoundError extends DomainError {
   constructor(id?: string, message: string = 'User not found') {
-    super(id ? `User with id ${id} not found` : 'User not found');
-    this.name = 'UserNotFoundError';
-    this.statusCode = 404; // HTTP Status Code for "Not Found"
-
-    // Ensuring that the prototype chain is set correctly
-    Object.setPrototypeOf(this, new.target.prototype);
+    super(id ? `User with id ${id} not found` : message, 404); // 404 is the HTTP status code for "Not Found"
   }
 }

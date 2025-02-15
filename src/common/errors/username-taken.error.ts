@@ -1,12 +1,7 @@
-export class UsernameTakenError extends Error {
-  statusCode: number;
+import { DomainError } from 'src/common/errors/domain.error'; // Import the base class
 
+export class UsernameTakenError extends DomainError {
   constructor(message: string = 'Username is already taken') {
-    super(message);
-    this.name = 'UsernameTakenError';
-    this.statusCode = 409; // HTTP Status Code for "Conflict"
-
-    // Ensuring that the prototype chain is set correctly
-    Object.setPrototypeOf(this, new.target.prototype);
+    super(message, 409); // 409 is the HTTP status code for "Conflict"
   }
 }

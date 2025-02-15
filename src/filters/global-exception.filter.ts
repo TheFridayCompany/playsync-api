@@ -5,9 +5,7 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
-import { InvalidObjectIdError } from 'src/common/errors/invalid-object-id.error';
-import { UserNotFoundError } from 'src/common/errors/user-not-found.error';
-import { UsernameTakenError } from 'src/common/errors/username-taken.error';
+import { DomainError } from 'src/common/errors/domain.error';
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
@@ -18,20 +16,23 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     let status = HttpStatus.INTERNAL_SERVER_ERROR;
     let message = 'Internal server error';
 
+    // Check if the exception is a known instance of HttpException or a DomainError
     if (exception instanceof HttpException) {
       status = exception.getStatus();
       message = exception.message;
-    } else if (exception instanceof InvalidObjectIdError) {
-      status = HttpStatus.BAD_REQUEST;
-      message = exception.message;
-    } else if (exception instanceof UserNotFoundError) {
-      status = HttpStatus.NOT_FOUND;
-      message = exception.message;
-    } else if (exception instanceof UsernameTakenError) {
-      status = HttpStatus.CONFLICT;
+    } else if (exception instanceof DomainError) {
+      status = exception.statusCode;
       message = exception.message;
     }
 
+    // Handle unexpected exceptions
+    if (
+      !(exception instanceof HttpException || exception instanceof DomainError)
+    ) {
+      console.error('Unexpected error:', exception); // Log unexpected errors for debugging
+    }
+
+    // Send the error response
     response.status(status).json({ statusCode: status, message });
   }
 }
