@@ -1,4 +1,4 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { User } from '../models/user.model';
 import { IUsersService } from '../../application/interfaces/users.service.interface';
 import IRepository from 'src/common/interfaces/repository.interface';

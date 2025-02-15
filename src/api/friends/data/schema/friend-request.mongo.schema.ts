@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import { IUserModel } from 'src/api/users/data/schema/user.mongo.schema';
 
 export const FriendRequestSchema = new mongoose.Schema(
   {
