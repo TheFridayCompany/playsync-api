@@ -14,19 +14,23 @@ export default class PlaylistsService implements IPlaylistsService {
     throw new Error('Method not implemented.');
   }
 
+  updatePlaylistDetails(
+    id: string,
+    name: string,
+    description: string,
+  ): Promise<Playlist> {
+    throw new Error('Method not implemented.');
+  }
+
+  updatePlaylistVisibility(visibility: PlaylistVisibility): Promise<Playlist> {
+    throw new Error('Method not implemented.');
+  }
+
   deletePlaylist(id: string): Promise<void> {
     throw new Error('Method not implemented.');
   }
 
   getPlaylist(id: string): Promise<Playlist> {
-    throw new Error('Method not implemented.');
-  }
-
-  addSongs(id: string, songIds: number[]): Promise<void> {
-    throw new Error('Method not implemented.');
-  }
-
-  removeSongs(id: string, songIds: number[]): Promise<void> {
     throw new Error('Method not implemented.');
   }
 }

@@ -34,4 +34,19 @@ export default interface IPlaylistsService {
    * @returns A promise that resolves to the Playlist object.
    */
   getPlaylist(id: string): Promise<Playlist>;
+
+  /**
+   * Updates details of a playlist.
+   * @param id - The ID of the playlist to retrieve.
+   * @param name - The updated name of the playlist.
+   * @param description - The updated description of the playlist.
+   * @returns A promise that resolves to the Playlist object.
+   */
+  updatePlaylistDetails(
+    id: string,
+    name: string,
+    description: string,
+  ): Promise<Playlist>;
+
+  updatePlaylistVisibility(visibility: PlaylistVisibility): Promise<Playlist>;
 }
