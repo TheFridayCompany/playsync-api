@@ -1,10 +1,9 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { UsersModule } from './api/users/users.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { FriendsModule } from './api/friends/friends.module';
+import { PlaylistsModule } from './api/playlists/playlists.module';
 
 @Module({
   imports: [
@@ -17,9 +16,10 @@ import { FriendsModule } from './api/friends/friends.module';
       inject: [ConfigService],
     }),
     UsersModule,
+    PlaylistsModule,
     FriendsModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}
