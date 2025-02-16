@@ -5,7 +5,6 @@ import { UserMongooseRepository } from './data/repositories/user.mongo.repositor
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserSchema } from './data/schema/user.mongo.schema';
 import { SYMBOLS } from 'src/common/symbols';
-import { UUIDService } from 'src/common/uuid.service';
 
 @Module({
   imports: [
@@ -18,7 +17,6 @@ import { UUIDService } from 'src/common/uuid.service';
       useClass: UserMongooseRepository,
     },
     { provide: SYMBOLS.USERS_SERVICE, useClass: UsersService },
-    { provide: SYMBOLS.UUID_SERVICE, useClass: UUIDService },
   ],
   exports: [{ provide: SYMBOLS.USERS_SERVICE, useClass: UsersService }],
 })
