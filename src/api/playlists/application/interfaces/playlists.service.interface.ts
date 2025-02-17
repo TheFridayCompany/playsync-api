@@ -1,9 +1,12 @@
+import { User } from 'src/api/users/domain/models/user.model';
 import {
   Playlist,
   PlaylistVisibility,
 } from '../../domain/models/playlist.model';
 
 export default interface IPlaylistsService {
+  forUser(user: User): IPlaylistsService;
+
   /**
    * Creates a new playlist.
    * @param name - The name of the playlist.
@@ -16,7 +19,6 @@ export default interface IPlaylistsService {
   createPlaylist(
     name: string,
     description: string,
-    userId: string,
     collaboratorIds: string[],
     visibility: PlaylistVisibility,
   ): Promise<Playlist>;
@@ -36,6 +38,13 @@ export default interface IPlaylistsService {
   getPlaylist(id: string): Promise<Playlist>;
 
   /**
+   * Retrieves a playlists for a user.
+   * @param userId - The ID of the owner / collaborator.
+   * @returns A promise that resolves to the list of Playlist object.
+   */
+  getPlaylists(userId?: string): Promise<Playlist[]>;
+
+  /**
    * Updates details of a playlist.
    * @param id - The ID of the playlist to retrieve.
    * @param name - The updated name of the playlist.
@@ -48,5 +57,14 @@ export default interface IPlaylistsService {
     description: string,
   ): Promise<Playlist>;
 
-  updatePlaylistVisibility(visibility: PlaylistVisibility): Promise<Playlist>;
+  /**
+   * Updates visibility of a playlist.
+   * @param id - The ID of the playlist to retrieve.
+   * @param visibility - The visibility of the playlist.
+   * @returns A promise that resolves to the Playlist object.
+   */
+  updatePlaylistVisibility(
+    id: string,
+    visibility: PlaylistVisibility,
+  ): Promise<Playlist>;
 }

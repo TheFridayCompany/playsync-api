@@ -4,6 +4,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { FriendsModule } from './api/friends/friends.module';
 import { PlaylistsModule } from './api/playlists/playlists.module';
+import { SongsModule } from './api/songs/songs.module';
 
 @Module({
   imports: [
@@ -18,8 +19,7 @@ import { PlaylistsModule } from './api/playlists/playlists.module';
     UsersModule,
     PlaylistsModule,
     FriendsModule,
+    SongsModule,
   ],
-  controllers: [],
-  providers: [],
 })
 export class AppModule {}

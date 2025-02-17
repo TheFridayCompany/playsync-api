@@ -13,6 +13,16 @@ export class FriendshipService implements IFriendshipService {
     private readonly friendshipRepository: IFriendshipRepository,
   ) {}
 
+  async checkFriendshipStatus(
+    userId: string,
+    friendId: string,
+  ): Promise<boolean> {
+    const areFriends =
+      (await this.friendshipRepository.findOne(userId, friendId)) !== null;
+
+    return areFriends;
+  }
+
   addFriend(userId: string, friendId: string): Promise<void> {
     if (userId === friendId) {
       throw new CannotFriendSelf();

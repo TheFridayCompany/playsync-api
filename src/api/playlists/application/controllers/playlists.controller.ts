@@ -1,6 +1,17 @@
-import { Controller, Inject } from '@nestjs/common';
+import {
+  Controller,
+  Delete,
+  Get,
+  Inject,
+  Param,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { SYMBOLS } from 'src/common/symbols';
 import IPlaylistsService from '../interfaces/playlists.service.interface';
+import { PlaylistVisibility } from '../../domain/models/playlist.model';
+import { User } from 'src/api/users/domain/models/user.model';
 
 @Controller('playlists')
 export class PlaylistsController {
@@ -9,20 +20,34 @@ export class PlaylistsController {
     private readonly playlistsService: IPlaylistsService,
   ) {}
 
-  //   @Post()
-  //   create(@Body() createUserDto: CreateUserDto) {
-  //     const { username, name } = createUserDto;
+  @Post()
+  create() {
+    return this.playlistsService
+      .forUser(new User('', '', ''))
+      .createPlaylist('', '', [], PlaylistVisibility.PRIVATE);
+  }
 
-  //     return this.usersService.createUser(username, name);
-  //   }
+  @Patch()
+  updateDetails(@Param('id') id: string) {
+    return this.playlistsService
+      .forUser(new User('', '', ''))
+      .updatePlaylistDetails(id, '', '');
+  }
 
-  //   @Get(':id')
-  //   getUser(@Param('id') id: string) {
-  //     return this.usersService.getUser(id);
-  //   }
+  @Get(':id')
+  getPlaylist(@Param('id') id: string) {
+    return this.playlistsService.forUser(new User('', '', '')).getPlaylist(id);
+  }
 
-  //   @Delete(':id')
-  //   deleteUser(@Param('id') id: string) {
-  //     return this.usersService.deleteUser(id);
-  //   }
+  @Get()
+  getPlaylists(@Query('userId') id?: string) {
+    return this.playlistsService.forUser(new User('', '', '')).getPlaylists(id);
+  }
+
+  @Delete(':id')
+  deletePlaylist(@Param('id') id: string) {
+    return this.playlistsService
+      .forUser(new User('', '', ''))
+      .deletePlaylist(id);
+  }
 }

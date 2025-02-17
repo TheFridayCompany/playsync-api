@@ -8,12 +8,15 @@ import PlaylistCollaborationService from './domain/services/playlist-collaborati
 import PlaylistSongsService from './domain/services/playlist-songs.service';
 import { PlaylistSongsController } from './application/controllers/playlist-songs.controller';
 import { PlaylistCollaborationController } from './application/controllers/playlist-collaboration.controller';
+import PlaylistMongoRepository from './data/repositories/playlists.repository';
+import { FriendsModule } from '../friends/friends.module';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: SYMBOLS.PLAYLIST, schema: PlaylistSchema },
     ]),
+    FriendsModule,
     // SongsModule,
   ],
   controllers: [
@@ -28,6 +31,10 @@ import { PlaylistCollaborationController } from './application/controllers/playl
       useClass: PlaylistCollaborationService,
     },
     { provide: SYMBOLS.PLAYLIST_SONGS_SERVICE, useClass: PlaylistSongsService },
+    {
+      provide: SYMBOLS.PLAYLISTS_REPOSITORY,
+      useClass: PlaylistMongoRepository,
+    },
   ],
   exports: [
     { provide: SYMBOLS.PLAYLISTS_SERVICE, useClass: PlaylistsService },
