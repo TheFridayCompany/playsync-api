@@ -6,7 +6,7 @@ import IFriendRequestRepository from '../../domain/interfaces/friend-request.rep
 import { IFriendRequest } from '../schema/friend-request.mongo.schema';
 import {
   convertStringIdToMongooseObjectId,
-  mongooseObjectIdToString,
+  convertMongooseObjectIdToString,
 } from 'src/common/utils';
 
 export interface IFriendRequestMongoRepository
@@ -110,9 +110,9 @@ export class FriendRequestMongoRepository
     const { _id, sender, receiver, status, createdAt, updatedAt } =
       friendRequest;
     return new FriendRequest(
-      mongooseObjectIdToString(_id),
-      mongooseObjectIdToString(sender),
-      mongooseObjectIdToString(receiver),
+      convertMongooseObjectIdToString(_id),
+      convertMongooseObjectIdToString(sender),
+      convertMongooseObjectIdToString(receiver),
       status,
       createdAt,
       updatedAt,

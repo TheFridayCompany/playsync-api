@@ -6,6 +6,7 @@ import IPlaylistRepository from '../interfaces/playlist.repository.interface';
 import { User } from 'src/api/users/domain/models/user.model';
 import { PlaylistNotFoundError } from 'src/common/errors/playlist-not-found.error';
 import IFriendshipService from 'src/api/friends/application/interfaces/friendship.service.interface';
+import IPlaylistCollaborationService from '../../application/interfaces/playlist-collaboration.service.interface';
 
 @Injectable()
 export default class PlaylistsService implements IPlaylistsService {
@@ -16,6 +17,8 @@ export default class PlaylistsService implements IPlaylistsService {
     private readonly playlistsRepository: IPlaylistRepository,
     @Inject(SYMBOLS.FRIENDSHIP_SERVICE)
     private readonly friendshipService: IFriendshipService,
+    @Inject(SYMBOLS.PLAYLIST_COLLABORATION_SERVICE)
+    private readonly playlistCollaborationService: IPlaylistCollaborationService,
   ) {}
 
   forUser(user: User): PlaylistsService {
@@ -31,11 +34,34 @@ export default class PlaylistsService implements IPlaylistsService {
   ): Promise<Playlist> {
     // TODO: perform sanitation on playlist name and description
 
-    // TODO: check if collaborators exist and are friends of the user
+    const playlist = await this.playlistsRepository.create(
+      name,
+      description,
+      visibility,
+      this.user.id,
+    );
 
-    const playlist = await this.playlistsRepository.create();
+    // check if collaborators exist and are friends of the user
+    const filteredCollaboratorIds = await Promise.all(
+      collaboratorIds.map(async (collaboratorId) => {
+        const areFriends = await this.friendshipService.checkFriendshipStatus(
+          this.user.id,
+          collaboratorId,
+        );
+        return areFriends ? collaboratorId : null;
+      }),
+    );
 
-    // TODO: embed playlist id into creator's playlists field and collaborator's playlists field
+    // Remove `null` values
+    const finalCollaboratorIds = filteredCollaboratorIds.filter(Boolean);
+
+    // embed playlist id into collaborator's playlists field
+    if (finalCollaboratorIds.length > 0) {
+      await this.playlistCollaborationService.addCollaborators(
+        playlist.id,
+        finalCollaboratorIds,
+      );
+    }
 
     return playlist;
   }
@@ -45,8 +71,10 @@ export default class PlaylistsService implements IPlaylistsService {
     name: string,
     description: string,
   ): Promise<Playlist> {
-    // TODO: check if playlist actually exists; if not throw PlaylistNotFoundError
+    // check if playlist actually exists; if not throw PlaylistNotFoundError
     const playlist = await this.playlistsRepository.findOneById(id);
+
+    console.log(JSON.stringify(playlist));
 
     if (!playlist) {
       throw new PlaylistNotFoundError(id);
@@ -61,8 +89,13 @@ export default class PlaylistsService implements IPlaylistsService {
 
     // TODO: perform sanitation on name and description
 
-    // TODO: pass the name and description to repository
-    return this.playlistsRepository.update(id);
+    // pass the name and description to repository
+    return this.playlistsRepository.update(
+      id,
+      name,
+      description,
+      playlist.visibility,
+    );
   }
 
   async updatePlaylistVisibility(
@@ -88,8 +121,13 @@ export default class PlaylistsService implements IPlaylistsService {
       return playlist;
     }
 
-    // TODO: pass the visibility to repository to update
-    return this.playlistsRepository.update(id);
+    // pass the visibility to repository to update
+    return this.playlistsRepository.update(
+      id,
+      playlist.name,
+      playlist.description,
+      visibility,
+    );
   }
 
   async deletePlaylist(id: string): Promise<void> {
@@ -100,18 +138,18 @@ export default class PlaylistsService implements IPlaylistsService {
       throw new PlaylistNotFoundError(id);
     }
 
+    console.log(JSON.stringify(playlist));
+    console.log(this.user.id);
+
     //check if the user is the creator of the playlist; if not throw unauthorized exception
     if (playlist.userId !== this.user.id) {
       throw new UnauthorizedException(
         "You need to be the creator of the playlist to modify this it's visibility",
       );
     }
-    // TODO: think about what happens to the collaborators of the playlist??
 
     // delete playlist
     await this.playlistsRepository.delete(id);
-
-    // TODO: delete embedded ids from user (creator and collaborator) objects
   }
 
   async getPlaylist(id: string): Promise<Playlist> {
@@ -122,10 +160,11 @@ export default class PlaylistsService implements IPlaylistsService {
       throw new PlaylistNotFoundError(id);
     }
 
-    // if playlist is private and the requesting user is not the creator; throw UnauthorizedException
+    // if playlist is private and the requesting user is not the creator or not a collaborator; throw UnauthorizedException
     if (
       playlist.visibility == PlaylistVisibility.PRIVATE &&
-      playlist.userId !== this.user.id
+      (playlist.userId !== this.user.id ||
+        !playlist.collaboratorIds.includes(this.user.id))
     ) {
       throw new UnauthorizedException(
         'You do not have access to this playlist',
@@ -136,19 +175,12 @@ export default class PlaylistsService implements IPlaylistsService {
   }
 
   async getPlaylists(userId?: string): Promise<Playlist[]> {
-    /**
-     * if user id is null or not null and equal to the id of the user in global scope; find all playlists for the user set in global scope i.e. private and publicly created playlists and public playlists where user is a collaborator
-     * if user id is not null and not equal to the id of the user in global scope;
-     *    check if the globally set user is friends with this user id;
-     *      if they are not friends throw unauthorized exception;
-     *      else find all publicly created playlists of the user. should we show collaborating playlists??
-     */
-
-    // requesting for my playlists; find all playlists for the user set in global scope i.e. private and publicly created playlists and public playlists where user is a collaborator
+    // requesting for my playlists; find all playlists for the user set in global scope i.e. private and publicly created playlists and playlists where user is a collaborator
     if (!userId || (userId && userId === this.user.id)) {
+      return this.playlistsRepository.findForUser(this.user.id, true);
     }
 
-    // TODO: check if this user is friends with globally set user
+    // check if this user is friends with globally set user; if not then throw unauthorized exception
     const areFriends = await this.friendshipService.checkFriendshipStatus(
       userId,
       this.user.id,
@@ -160,8 +192,9 @@ export default class PlaylistsService implements IPlaylistsService {
       );
     }
 
-    // TODO: return all publicly created playlists of the user.
-
-    throw new Error('Method not implemented.');
+    // return all publicly created playlists of the user.
+    return this.playlistsRepository.findForUser(userId, false, [
+      PlaylistVisibility.PUBLIC,
+    ]);
   }
 }

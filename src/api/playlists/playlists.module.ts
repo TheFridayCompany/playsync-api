@@ -10,13 +10,17 @@ import { PlaylistSongsController } from './application/controllers/playlist-song
 import { PlaylistCollaborationController } from './application/controllers/playlist-collaboration.controller';
 import PlaylistMongoRepository from './data/repositories/playlists.repository';
 import { FriendsModule } from '../friends/friends.module';
+import { UserSchema } from '../users/data/schema/user.mongo.schema';
+import { UsersModule } from '../users/users.module';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: SYMBOLS.PLAYLIST, schema: PlaylistSchema },
+      { name: SYMBOLS.USER, schema: UserSchema },
     ]),
     FriendsModule,
+    UsersModule,
     // SongsModule,
   ],
   controllers: [
