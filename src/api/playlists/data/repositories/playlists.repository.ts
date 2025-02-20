@@ -7,12 +7,10 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
 import { IPlaylist } from '../schema/playlist.mongo.schema';
-import {
-  convertMongooseObjectIdToString,
-  convertStringIdToMongooseObjectId,
-} from 'src/common/utils';
+import { convertMongooseObjectIdToString } from 'src/common/utils';
 import { User } from 'src/api/users/domain/models/user.model';
 import { IUserModel } from 'src/api/users/data/schema/user.mongo.schema';
+import { Song } from 'src/api/songs/domain/models/song.model';
 
 @Injectable()
 export default class PlaylistMongoRepository implements IPlaylistRepository {
@@ -22,6 +20,13 @@ export default class PlaylistMongoRepository implements IPlaylistRepository {
     @InjectModel(User.name)
     private readonly userModel: mongoose.Model<IUserModel>,
   ) {}
+
+  async addSong(id: string, song: Song): Promise<Playlist> {
+    const playlist = await this.playlistModel.findByIdAndUpdate(id, {
+      $push: { songs: song },
+    });
+    return this.toDomain(playlist);
+  }
 
   async create(
     name: string,
@@ -186,6 +191,7 @@ export default class PlaylistMongoRepository implements IPlaylistRepository {
       createdAt,
       updatedAt,
       collaboratorIds,
+      songs,
     } = playlistModel;
 
     return new Playlist(
@@ -197,6 +203,17 @@ export default class PlaylistMongoRepository implements IPlaylistRepository {
       createdAt,
       updatedAt,
       collaboratorIds.map((id) => convertMongooseObjectIdToString(id)),
+      songs.map(
+        (song) =>
+          new Song(
+            song.id,
+            song.name,
+            song.duration_ms,
+            song.web_urls,
+            song.uris,
+            song.artists,
+          ),
+      ),
     );
   }
 }

@@ -1,17 +1,22 @@
+import { User } from 'src/api/users/domain/models/user.model';
+import { Playlist } from '../../domain/models/playlist.model';
+
 export default interface IPlaylistSongsService {
+  forUser(user: User);
+
   /**
-   * Adds songs to a playlist.
+   * Adds a song to a playlist.
    * @param id - The ID of the playlist.
-   * @param songIds - An array of song IDs to be added.
+   * @param songId - ID of a song to be added.
    * @returns A promise that resolves when the songs are added.
    */
-  addSongs(id: string, songIds: number[]): Promise<void>;
+  addSong(id: string, songId: string): Promise<Playlist>;
 
   /**
    * Removes songs from a playlist.
    * @param id - The ID of the playlist.
-   * @param songIds - An array of song IDs to be removed.
+   * @param songId - ID of song to be removed.
    * @returns A promise that resolves when the songs are removed.
    */
-  removeSongs(id: string, songIds: number[]): Promise<void>;
+  removeSong(id: string, songId: string): Promise<Playlist>;
 }

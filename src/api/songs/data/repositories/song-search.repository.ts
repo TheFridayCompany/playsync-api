@@ -16,6 +16,7 @@ export default class SpotifySongSearchRepository
   private clientSecret: string;
   private tokenUrl = 'https://accounts.spotify.com/api/token';
   private searchUrl = 'https://api.spotify.com/v1/search';
+  private trackUrl = 'https://api.spotify.com/v1/tracks';
 
   constructor(
     private readonly httpService: HttpService,
@@ -26,6 +27,29 @@ export default class SpotifySongSearchRepository
     this.clientSecret =
       this.configService.get<string>('SPOTIFY_CLIENT_SECRET') ||
       'YOUR_CLIENT_SECRET';
+  }
+
+  async findById(id: string): Promise<Song | null> {
+    const accessToken = await this.getAccessToken();
+
+    let url = this.buildTrackUrl(id);
+    console.log(url);
+    try {
+      const response =
+        await this.httpService.axiosRef.get<ISpotifyItemResponse>(url, {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        });
+
+      console.log(JSON.stringify(response.data));
+
+      return this.toDomain(response.data);
+    } catch (error) {
+      console.error(error);
+      throw new HttpException(
+        `Spotify search failed: ${error.response?.data?.error?.message || error.message}`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
   private async getAccessToken(): Promise<string> {
@@ -56,7 +80,7 @@ export default class SpotifySongSearchRepository
     }
   }
 
-  async find(query: string): Promise<any[]> {
+  async find(query: string): Promise<Song[]> {
     const accessToken = await this.getAccessToken();
 
     try {
@@ -77,6 +101,10 @@ export default class SpotifySongSearchRepository
         HttpStatus.BAD_REQUEST,
       );
     }
+  }
+
+  private buildTrackUrl(id: string): string {
+    return this.trackUrl + `/${id}`;
   }
 
   private toDomain(song: ISpotifyItemResponse): Song {

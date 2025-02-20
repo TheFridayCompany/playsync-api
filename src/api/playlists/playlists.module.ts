@@ -12,6 +12,7 @@ import PlaylistMongoRepository from './data/repositories/playlists.repository';
 import { FriendsModule } from '../friends/friends.module';
 import { UserSchema } from '../users/data/schema/user.mongo.schema';
 import { UsersModule } from '../users/users.module';
+import { SongsModule } from '../songs/songs.module';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { UsersModule } from '../users/users.module';
     ]),
     FriendsModule,
     UsersModule,
-    // SongsModule,
+    SongsModule,
   ],
   controllers: [
     PlaylistsController,
