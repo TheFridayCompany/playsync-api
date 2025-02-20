@@ -6,6 +6,7 @@ import ISpotifySearchResponse, {
   ISpotifyItemResponse,
 } from '../interfaces/spotify-search-response.interface';
 import { Song } from '../../domain/models/song.model';
+import { Artist } from '../../domain/models/artist.model';
 
 @Injectable()
 export default class SpotifySongSearchRepository
@@ -57,7 +58,6 @@ export default class SpotifySongSearchRepository
 
   async find(query: string): Promise<any[]> {
     const accessToken = await this.getAccessToken();
-    console.log(JSON.stringify(accessToken));
 
     try {
       const response =
@@ -69,10 +69,9 @@ export default class SpotifySongSearchRepository
           },
         );
 
-      console.log(JSON.stringify(response.data));
-
       return response.data.tracks.items.map((song) => this.toDomain(song));
     } catch (error) {
+      console.error(error);
       throw new HttpException(
         `Spotify search failed: ${error.response?.data?.error?.message || error.message}`,
         HttpStatus.BAD_REQUEST,
@@ -81,7 +80,30 @@ export default class SpotifySongSearchRepository
   }
 
   private toDomain(song: ISpotifyItemResponse): Song {
-    const { id, name, duration_ms, spotify_uri } = song;
-    return new Song(id, name, spotify_uri, duration_ms);
+    // TODO: add the uris and web urls for other platforms
+    const {
+      id,
+      name,
+      duration_ms,
+      uri: spotify_uri,
+      external_urls,
+      artists,
+    } = song;
+    return new Song(
+      id,
+      name,
+      duration_ms,
+      [external_urls.spotify],
+      [spotify_uri],
+      artists.map(
+        (artist) =>
+          new Artist(
+            artist.id,
+            artist.name,
+            [artist.external_urls.spotify],
+            [artist.uri],
+          ),
+      ),
+    );
   }
 }
