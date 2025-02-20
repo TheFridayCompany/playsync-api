@@ -29,4 +29,6 @@ export default interface IPlaylistRepository {
   delete(id: string): Promise<Playlist>;
 
   addSong(id: string, song: Song): Promise<Playlist>;
+
+  removeSong(id: string, songId: string): Promise<Playlist>;
 }

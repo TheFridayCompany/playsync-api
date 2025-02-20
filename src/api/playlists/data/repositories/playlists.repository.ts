@@ -21,10 +21,26 @@ export default class PlaylistMongoRepository implements IPlaylistRepository {
     private readonly userModel: mongoose.Model<IUserModel>,
   ) {}
 
+  async removeSong(id: string, songId: string): Promise<Playlist> {
+    const playlist = await this.playlistModel.findByIdAndUpdate(
+      id,
+      {
+        $pull: { songs: { id: songId } },
+      },
+      { new: true },
+    );
+
+    return this.toDomain(playlist);
+  }
+
   async addSong(id: string, song: Song): Promise<Playlist> {
-    const playlist = await this.playlistModel.findByIdAndUpdate(id, {
-      $push: { songs: song },
-    });
+    const playlist = await this.playlistModel.findByIdAndUpdate(
+      id,
+      {
+        $push: { songs: song },
+      },
+      { new: true },
+    );
     return this.toDomain(playlist);
   }
 

@@ -6,6 +6,7 @@ import IPlaylistRepository from '../interfaces/playlist.repository.interface';
 import IPlaylistsService from '../../application/interfaces/playlists.service.interface';
 import { User } from 'src/api/users/domain/models/user.model';
 import { Playlist } from '../models/playlist.model';
+import { SongExistsInPlaylistError } from 'src/common/errors/song-exists-in-playlist.error';
 
 @Injectable()
 export default class PlaylistSongsService implements IPlaylistSongsService {
@@ -38,6 +39,10 @@ export default class PlaylistSongsService implements IPlaylistSongsService {
     console.log('found song to be added');
     console.log(JSON.stringify(song));
 
+    if (playlist.songs.some((song) => song.id === songId)) {
+      throw new SongExistsInPlaylistError(songId);
+    }
+
     return this.playlistRepository.addSong(playlist.id, song);
   }
 
@@ -46,6 +51,11 @@ export default class PlaylistSongsService implements IPlaylistSongsService {
       .forUser(this.user)
       .getPlaylist(id);
 
-    throw new Error('Method not implemented.');
+    const song = await this.songSearchService.findOneById(songId);
+
+    console.log('found song to be added');
+    console.log(JSON.stringify(song));
+
+    return this.playlistRepository.removeSong(id, songId);
   }
 }
