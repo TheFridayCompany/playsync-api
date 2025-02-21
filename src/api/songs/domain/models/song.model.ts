@@ -1,13 +1,14 @@
-import IStreamingPlatformLinkBuilder from '../interfaces/external-platform-link-builder.interface';
 import { ILinkGenerationStrategy } from '../interfaces/link-generation-strategy.interface';
 import { PlatformLinksMap } from '../interfaces/platform-links-map.interface';
-import AppleMusicMobileLinkGenerator from '../services/link-builders/platforms/mobile/apple-music-mobile-link.generator';
-import YoutubeMusicMobileLinkGenerator from '../services/link-builders/platforms/mobile/youtube-music-mobile-link.generator';
-import AppleMusicWebLinkGenerator from '../services/link-builders/platforms/web/apple-music-web-link.generator';
 import SongNameAndArtistsNamesSearchStrategy from '../services/link-builders/platforms/web/strategies/name-artist-name-search-strategy';
-import YoutubeMusicWebLinkGenerator from '../services/link-builders/platforms/web/youtube-music-web-link.generator';
-import AbstractStreamingPlatformLinkGenerator from '../services/link-builders/streaming-platform-link-generator';
 import { Artist } from './artist.model';
+import AppleMusicMobileLinkGenerator from './link-builders/platforms/mobile/apple-music-mobile-link.generator';
+import YoutubeMusicMobileLinkGenerator from './link-builders/platforms/mobile/youtube-music-mobile-link.generator';
+import AppleMusicWebLinkGenerator from './link-builders/platforms/web/apple-music-web-link.generator';
+import SpotifyWebLinkGenerator from './link-builders/platforms/web/spotify-web-link.generator';
+import IdSpecificLinkStrategy from './link-builders/platforms/web/strategies/id-specific-link.strategy';
+import YoutubeMusicWebLinkGenerator from './link-builders/platforms/web/youtube-music-web-link.generator';
+import AbstractStreamingPlatformLinkGenerator from './link-builders/streaming-platform-link-generator';
 import { StreamingPlatforms } from './streaming-platforms.enum';
 
 export class Song {
@@ -58,8 +59,8 @@ export class Song {
     public webUrlGenerators: {
       [platform in StreamingPlatforms]: AbstractStreamingPlatformLinkGenerator;
     } = {
-      [StreamingPlatforms.Spotify]: new YoutubeMusicWebLinkGenerator(
-        new SongNameAndArtistsNamesSearchStrategy(),
+      [StreamingPlatforms.Spotify]: new SpotifyWebLinkGenerator(
+        new IdSpecificLinkStrategy(),
       ),
       [StreamingPlatforms.AppleMusic]: new AppleMusicWebLinkGenerator(
         new SongNameAndArtistsNamesSearchStrategy(),
@@ -71,7 +72,7 @@ export class Song {
     public uriGenerators: {
       [platform in StreamingPlatforms]: AbstractStreamingPlatformLinkGenerator;
     } = {
-      [StreamingPlatforms.Spotify]: new YoutubeMusicMobileLinkGenerator(
+      [StreamingPlatforms.Spotify]: new SpotifyWebLinkGenerator(
         new SongNameAndArtistsNamesSearchStrategy(),
       ),
       [StreamingPlatforms.AppleMusic]: new AppleMusicMobileLinkGenerator(
