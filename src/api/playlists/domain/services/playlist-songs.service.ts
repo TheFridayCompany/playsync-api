@@ -7,10 +7,14 @@ import IPlaylistsService from '../../application/interfaces/playlists.service.in
 import { User } from 'src/api/users/domain/models/user.model';
 import { Playlist } from '../models/playlist.model';
 import { SongExistsInPlaylistError } from 'src/common/errors/song-exists-in-playlist.error';
+import { ConfigService } from '@nestjs/config';
+import { ReachedMaximumSongLimitForPlaylistError } from 'src/common/errors/maximum-songs-for-playlist.error';
 
 @Injectable()
 export default class PlaylistSongsService implements IPlaylistSongsService {
   private user: User;
+
+  private readonly MAX_PLAYLIST_SONG_COUNT: number;
 
   constructor(
     @Inject(SYMBOLS.SONG_SEARCH_SERVICE)
@@ -19,7 +23,12 @@ export default class PlaylistSongsService implements IPlaylistSongsService {
     private readonly playlistsService: IPlaylistsService,
     @Inject(SYMBOLS.PLAYLISTS_REPOSITORY)
     private readonly playlistRepository: IPlaylistRepository,
-  ) {}
+    private readonly configService: ConfigService,
+  ) {
+    this.MAX_PLAYLIST_SONG_COUNT = this.configService.get<number>(
+      'MAX_PLAYLIST_SONG_COUNT',
+    );
+  }
 
   forUser(user: User): IPlaylistSongsService {
     this.user = user;
@@ -33,6 +42,10 @@ export default class PlaylistSongsService implements IPlaylistSongsService {
 
     console.log('found playlist');
     console.log(JSON.stringify(playlist));
+
+    if (playlist.songs.length >= this.MAX_PLAYLIST_SONG_COUNT) {
+      throw new ReachedMaximumSongLimitForPlaylistError(playlist.id);
+    }
 
     const song = await this.songSearchService.findOneById(songId);
 

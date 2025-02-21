@@ -13,9 +13,11 @@ import { FriendsModule } from '../friends/friends.module';
 import { UserSchema } from '../users/data/schema/user.mongo.schema';
 import { UsersModule } from '../users/users.module';
 import { SongsModule } from '../songs/songs.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule,
     MongooseModule.forFeature([
       { name: SYMBOLS.PLAYLIST, schema: PlaylistSchema },
       { name: SYMBOLS.USER, schema: UserSchema },
