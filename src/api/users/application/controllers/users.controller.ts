@@ -6,16 +6,20 @@ import {
   Inject,
   Param,
   Post,
+  Query,
 } from '@nestjs/common';
 import CreateUserDto from '../dto/create-user.dto';
 import { IUsersService } from '../interfaces/users.service.interface';
 import { SYMBOLS } from 'src/common/symbols';
+import IUsersSearchService from '../interfaces/users-search.service.interface';
 
 @Controller('users')
 export class UsersController {
   constructor(
     @Inject(SYMBOLS.USERS_SERVICE)
     private readonly usersService: IUsersService,
+    @Inject(SYMBOLS.USERS_SEARCH_SERVICE)
+    private readonly usersSearchService: IUsersSearchService,
   ) {}
 
   @Post()
@@ -28,6 +32,11 @@ export class UsersController {
   @Get(':id')
   getUser(@Param('id') id: string) {
     return this.usersService.getUser(id);
+  }
+
+  @Get()
+  getUsersByUsername(@Query('username') usernameQuery: string) {
+    return this.usersSearchService.searchByUsername(usernameQuery.trim());
   }
 
   @Delete(':id')

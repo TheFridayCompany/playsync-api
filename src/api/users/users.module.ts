@@ -5,6 +5,7 @@ import { UserMongooseRepository } from './data/repositories/user.mongo.repositor
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserSchema } from './data/schema/user.mongo.schema';
 import { SYMBOLS } from 'src/common/symbols';
+import { UsersSearchService } from './domain/services/user-search.service';
 
 @Module({
   imports: [
@@ -17,7 +18,11 @@ import { SYMBOLS } from 'src/common/symbols';
       useClass: UserMongooseRepository,
     },
     { provide: SYMBOLS.USERS_SERVICE, useClass: UsersService },
+    { provide: SYMBOLS.USERS_SEARCH_SERVICE, useClass: UsersSearchService },
   ],
-  exports: [{ provide: SYMBOLS.USERS_SERVICE, useClass: UsersService }],
+  exports: [
+    { provide: SYMBOLS.USERS_SERVICE, useClass: UsersService },
+    { provide: SYMBOLS.USERS_SEARCH_SERVICE, useClass: UsersSearchService },
+  ],
 })
 export class UsersModule {}
