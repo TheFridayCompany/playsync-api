@@ -219,16 +219,13 @@ export default class PlaylistMongoRepository implements IPlaylistRepository {
       createdAt,
       updatedAt,
       collaboratorIds.map((id) => convertMongooseObjectIdToString(id)),
-      songs.map(
-        (song) =>
-          new Song(
-            song.id,
-            song.name,
-            song.duration_ms,
-            song.web_urls,
-            song.uris,
-            song.artists,
-          ),
+      songs.map((song) =>
+        new Song.Builder(
+          song.id,
+          song.name,
+          song.duration_ms,
+          song.artists,
+        ).build(),
       ),
     );
   }

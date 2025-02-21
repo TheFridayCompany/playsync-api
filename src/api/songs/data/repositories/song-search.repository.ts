@@ -7,6 +7,7 @@ import ISpotifySearchResponse, {
 } from '../interfaces/spotify-search-response.interface';
 import { Song } from '../../domain/models/song.model';
 import { Artist } from '../../domain/models/artist.model';
+import { StreamingPlatforms } from '../../domain/models/streaming-platforms.enum';
 
 @Injectable()
 export default class SpotifySongSearchRepository
@@ -32,15 +33,14 @@ export default class SpotifySongSearchRepository
   async findById(id: string): Promise<Song | null> {
     const accessToken = await this.getAccessToken();
 
-    let url = this.buildTrackUrl(id);
-    console.log(url);
     try {
       const response =
-        await this.httpService.axiosRef.get<ISpotifyItemResponse>(url, {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        });
-
-      console.log(JSON.stringify(response.data));
+        await this.httpService.axiosRef.get<ISpotifyItemResponse>(
+          this.buildTrackUrl(id),
+          {
+            headers: { Authorization: `Bearer ${accessToken}` },
+          },
+        );
 
       return this.toDomain(response.data);
     } catch (error) {
@@ -113,25 +113,16 @@ export default class SpotifySongSearchRepository
       id,
       name,
       duration_ms,
-      uri: spotify_uri,
-      external_urls,
+      // uri: spotify_uri,
+      // external_urls,
       artists,
     } = song;
-    return new Song(
+
+    return new Song.Builder(
       id,
       name,
       duration_ms,
-      [external_urls.spotify],
-      [spotify_uri],
-      artists.map(
-        (artist) =>
-          new Artist(
-            artist.id,
-            artist.name,
-            [artist.external_urls.spotify],
-            [artist.uri],
-          ),
-      ),
-    );
+      artists.map((artist) => new Artist(artist.id, artist.name)),
+    ).build();
   }
 }
