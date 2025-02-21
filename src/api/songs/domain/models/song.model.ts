@@ -1,12 +1,11 @@
 import { ILinkGenerationStrategy } from '../interfaces/link-generation-strategy.interface';
 import { PlatformLinksMap } from '../interfaces/platform-links-map.interface';
-import SongNameAndArtistsNamesSearchStrategy from '../services/link-builders/platforms/web/strategies/name-artist-name-search-strategy';
 import { Artist } from './artist.model';
 import AppleMusicMobileLinkGenerator from './link-builders/platforms/mobile/apple-music-mobile-link.generator';
-import YoutubeMusicMobileLinkGenerator from './link-builders/platforms/mobile/youtube-music-mobile-link.generator';
 import AppleMusicWebLinkGenerator from './link-builders/platforms/web/apple-music-web-link.generator';
 import SpotifyWebLinkGenerator from './link-builders/platforms/web/spotify-web-link.generator';
 import IdSpecificLinkStrategy from './link-builders/platforms/web/strategies/id-specific-link.strategy';
+import SongNameAndArtistsNamesSearchStrategy from './link-builders/platforms/web/strategies/name-artist-name-search-strategy';
 import YoutubeMusicWebLinkGenerator from './link-builders/platforms/web/youtube-music-web-link.generator';
 import AbstractStreamingPlatformLinkGenerator from './link-builders/streaming-platform-link-generator';
 import { StreamingPlatforms } from './streaming-platforms.enum';
