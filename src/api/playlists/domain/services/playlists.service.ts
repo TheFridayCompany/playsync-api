@@ -57,9 +57,14 @@ export default class PlaylistsService implements IPlaylistsService {
 
     // embed playlist id into collaborator's playlists field
     if (finalCollaboratorIds.length > 0) {
-      await this.playlistCollaborationService.addCollaborators(
-        playlist.id,
-        finalCollaboratorIds,
+      await Promise.all(
+        collaboratorIds.map((collaboratorId) =>
+          this.playlistCollaborationService.addCollaborator(
+            playlist.id,
+            this.user.id,
+            collaboratorId,
+          ),
+        ),
       );
     }
 

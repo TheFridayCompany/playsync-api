@@ -1,28 +1,40 @@
-import { Controller, Inject } from '@nestjs/common';
+import { Body, Controller, Delete, Inject, Param, Post } from '@nestjs/common';
 import { SYMBOLS } from 'src/common/symbols';
 import IPlaylistCollaborationService from '../interfaces/playlist-collaboration.service.interface';
+import AddCollaboratorDto from '../dto/add-collaborator.dto';
+import RemoveCollaboratorDto from '../dto/remove-collaborator.dto';
 
-@Controller('playlists/collaboration')
+@Controller('playlists/:playlistId/collaborators')
 export class PlaylistCollaborationController {
   constructor(
     @Inject(SYMBOLS.PLAYLIST_COLLABORATION_SERVICE)
     private readonly playlistCollaborationService: IPlaylistCollaborationService,
   ) {}
 
-  //   @Post()
-  //   create(@Body() createUserDto: CreateUserDto) {
-  //     const { username, name } = createUserDto;
+  @Post()
+  addCollaborator(
+    @Param('playlistId') playlistId: string,
+    @Body() addCollaboratorDto: AddCollaboratorDto,
+  ) {
+    const { collaboratorId, userId } = addCollaboratorDto;
 
-  //     return this.usersService.createUser(username, name);
-  //   }
+    return this.playlistCollaborationService.addCollaborator(
+      playlistId,
+      userId,
+      collaboratorId,
+    );
+  }
 
-  //   @Get(':id')
-  //   getUser(@Param('id') id: string) {
-  //     return this.usersService.getUser(id);
-  //   }
-
-  //   @Delete(':id')
-  //   deleteUser(@Param('id') id: string) {
-  //     return this.usersService.deleteUser(id);
-  //   }
+  @Delete()
+  removeCollaborator(
+    @Param('playlistId') playlistId: string,
+    @Body() removeCollaboratorDto: RemoveCollaboratorDto,
+  ) {
+    const { collaboratorId, userId } = removeCollaboratorDto;
+    return this.playlistCollaborationService.removeCollaborator(
+      playlistId,
+      userId,
+      collaboratorId,
+    );
+  }
 }

@@ -21,6 +21,69 @@ export default class PlaylistMongoRepository implements IPlaylistRepository {
     private readonly userModel: mongoose.Model<IUserModel>,
   ) {}
 
+  async addCollaborator(id: string, collaboratorId: string): Promise<Playlist> {
+    const session = await this.playlistModel.db.startSession();
+    session.startTransaction();
+
+    try {
+      const updatedPlaylist = await this.playlistModel.findByIdAndUpdate(
+        id,
+        { $push: { collaboratorIds: collaboratorId } },
+        { session },
+      );
+
+      console.log(JSON.stringify(updatedPlaylist));
+
+      // is this a good appoach? should we inject user service here instead?
+      await this.userModel.updateOne(
+        { _id: collaboratorId },
+        { $push: { collaboratingPlaylists: updatedPlaylist._id } },
+      );
+
+      await session.commitTransaction();
+      session.endSession();
+
+      return this.toDomain(updatedPlaylist);
+    } catch (e) {
+      await session.abortTransaction();
+      session.endSession();
+      throw e;
+    }
+  }
+
+  async removeCollaborator(
+    id: string,
+    collaboratorId: string,
+  ): Promise<Playlist> {
+    const session = await this.playlistModel.db.startSession();
+    session.startTransaction();
+
+    try {
+      const updatedPlaylist = await this.playlistModel.findByIdAndUpdate(
+        id,
+        { $pull: { collaboratorIds: collaboratorId } },
+        { session },
+      );
+
+      console.log(JSON.stringify(updatedPlaylist));
+
+      // is this a good appoach? should we inject user service here instead?
+      await this.userModel.updateOne(
+        { _id: collaboratorId },
+        { $pull: { collaboratingPlaylists: updatedPlaylist._id } },
+      );
+
+      await session.commitTransaction();
+      session.endSession();
+
+      return this.toDomain(updatedPlaylist);
+    } catch (e) {
+      await session.abortTransaction();
+      session.endSession();
+      throw e;
+    }
+  }
+
   async removeSong(id: string, songId: string): Promise<Playlist> {
     const playlist = await this.playlistModel.findByIdAndUpdate(
       id,
