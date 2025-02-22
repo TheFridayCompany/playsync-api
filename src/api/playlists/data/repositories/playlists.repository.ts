@@ -7,12 +7,10 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
 import { IPlaylist } from '../schema/playlist.mongo.schema';
-import {
-  convertMongooseObjectIdToString,
-  convertStringIdToMongooseObjectId,
-} from 'src/common/utils';
+import { convertMongooseObjectIdToString } from 'src/common/utils';
 import { User } from 'src/api/users/domain/models/user.model';
 import { IUserModel } from 'src/api/users/data/schema/user.mongo.schema';
+import { Song } from 'src/api/songs/domain/models/song.model';
 
 @Injectable()
 export default class PlaylistMongoRepository implements IPlaylistRepository {
@@ -22,6 +20,92 @@ export default class PlaylistMongoRepository implements IPlaylistRepository {
     @InjectModel(User.name)
     private readonly userModel: mongoose.Model<IUserModel>,
   ) {}
+
+  async addCollaborator(id: string, collaboratorId: string): Promise<Playlist> {
+    const session = await this.playlistModel.db.startSession();
+    session.startTransaction();
+
+    try {
+      const updatedPlaylist = await this.playlistModel.findByIdAndUpdate(
+        id,
+        { $push: { collaboratorIds: collaboratorId } },
+        { session },
+      );
+
+      console.log(JSON.stringify(updatedPlaylist));
+
+      // is this a good appoach? should we inject user service here instead?
+      await this.userModel.updateOne(
+        { _id: collaboratorId },
+        { $push: { collaboratingPlaylists: updatedPlaylist._id } },
+      );
+
+      await session.commitTransaction();
+      session.endSession();
+
+      return this.toDomain(updatedPlaylist);
+    } catch (e) {
+      await session.abortTransaction();
+      session.endSession();
+      throw e;
+    }
+  }
+
+  async removeCollaborator(
+    id: string,
+    collaboratorId: string,
+  ): Promise<Playlist> {
+    const session = await this.playlistModel.db.startSession();
+    session.startTransaction();
+
+    try {
+      const updatedPlaylist = await this.playlistModel.findByIdAndUpdate(
+        id,
+        { $pull: { collaboratorIds: collaboratorId } },
+        { session },
+      );
+
+      console.log(JSON.stringify(updatedPlaylist));
+
+      // is this a good appoach? should we inject user service here instead?
+      await this.userModel.updateOne(
+        { _id: collaboratorId },
+        { $pull: { collaboratingPlaylists: updatedPlaylist._id } },
+      );
+
+      await session.commitTransaction();
+      session.endSession();
+
+      return this.toDomain(updatedPlaylist);
+    } catch (e) {
+      await session.abortTransaction();
+      session.endSession();
+      throw e;
+    }
+  }
+
+  async removeSong(id: string, songId: string): Promise<Playlist> {
+    const playlist = await this.playlistModel.findByIdAndUpdate(
+      id,
+      {
+        $pull: { songs: { id: songId } },
+      },
+      { new: true },
+    );
+
+    return this.toDomain(playlist);
+  }
+
+  async addSong(id: string, song: Song): Promise<Playlist> {
+    const playlist = await this.playlistModel.findByIdAndUpdate(
+      id,
+      {
+        $push: { songs: song },
+      },
+      { new: true },
+    );
+    return this.toDomain(playlist);
+  }
 
   async create(
     name: string,
@@ -186,6 +270,7 @@ export default class PlaylistMongoRepository implements IPlaylistRepository {
       createdAt,
       updatedAt,
       collaboratorIds,
+      songs,
     } = playlistModel;
 
     return new Playlist(
@@ -197,6 +282,14 @@ export default class PlaylistMongoRepository implements IPlaylistRepository {
       createdAt,
       updatedAt,
       collaboratorIds.map((id) => convertMongooseObjectIdToString(id)),
+      songs.map((song) =>
+        new Song.Builder(
+          song.id,
+          song.name,
+          song.duration_ms,
+          song.artists,
+        ).build(),
+      ),
     );
   }
 }

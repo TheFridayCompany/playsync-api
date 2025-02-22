@@ -14,6 +14,17 @@ export interface ISpotifyTracksResponse {
 export interface ISpotifyItemResponse {
   id: string;
   name: string;
-  spotify_uri: string;
+  href: string;
+  uri: string;
   duration_ms: number;
+  artists: ISpotifyItemArtistResponse[];
+  external_urls: { spotify: string };
+}
+
+export interface ISpotifyItemArtistResponse {
+  id: string;
+  name: string;
+  href: string;
+  external_urls: { spotify: string };
+  uri: string;
 }

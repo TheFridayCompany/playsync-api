@@ -6,6 +6,8 @@ import ISpotifySearchResponse, {
   ISpotifyItemResponse,
 } from '../interfaces/spotify-search-response.interface';
 import { Song } from '../../domain/models/song.model';
+import { Artist } from '../../domain/models/artist.model';
+import { StreamingPlatforms } from '../../domain/models/streaming-platforms.enum';
 
 @Injectable()
 export default class SpotifySongSearchRepository
@@ -15,6 +17,7 @@ export default class SpotifySongSearchRepository
   private clientSecret: string;
   private tokenUrl = 'https://accounts.spotify.com/api/token';
   private searchUrl = 'https://api.spotify.com/v1/search';
+  private trackUrl = 'https://api.spotify.com/v1/tracks';
 
   constructor(
     private readonly httpService: HttpService,
@@ -25,6 +28,28 @@ export default class SpotifySongSearchRepository
     this.clientSecret =
       this.configService.get<string>('SPOTIFY_CLIENT_SECRET') ||
       'YOUR_CLIENT_SECRET';
+  }
+
+  async findById(id: string): Promise<Song | null> {
+    const accessToken = await this.getAccessToken();
+
+    try {
+      const response =
+        await this.httpService.axiosRef.get<ISpotifyItemResponse>(
+          this.buildTrackUrl(id),
+          {
+            headers: { Authorization: `Bearer ${accessToken}` },
+          },
+        );
+
+      return this.toDomain(response.data);
+    } catch (error) {
+      console.error(error);
+      throw new HttpException(
+        `Spotify search failed: ${error.response?.data?.error?.message || error.message}`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
   private async getAccessToken(): Promise<string> {
@@ -55,9 +80,8 @@ export default class SpotifySongSearchRepository
     }
   }
 
-  async find(query: string): Promise<any[]> {
+  async find(query: string): Promise<Song[]> {
     const accessToken = await this.getAccessToken();
-    console.log(JSON.stringify(accessToken));
 
     try {
       const response =
@@ -69,10 +93,9 @@ export default class SpotifySongSearchRepository
           },
         );
 
-      console.log(JSON.stringify(response.data));
-
       return response.data.tracks.items.map((song) => this.toDomain(song));
     } catch (error) {
+      console.error(error);
       throw new HttpException(
         `Spotify search failed: ${error.response?.data?.error?.message || error.message}`,
         HttpStatus.BAD_REQUEST,
@@ -80,8 +103,26 @@ export default class SpotifySongSearchRepository
     }
   }
 
+  private buildTrackUrl(id: string): string {
+    return this.trackUrl + `/${id}`;
+  }
+
   private toDomain(song: ISpotifyItemResponse): Song {
-    const { id, name, duration_ms, spotify_uri } = song;
-    return new Song(id, name, spotify_uri, duration_ms);
+    // TODO: add the uris and web urls for other platforms
+    const {
+      id,
+      name,
+      duration_ms,
+      // uri: spotify_uri,
+      // external_urls,
+      artists,
+    } = song;
+
+    return new Song.Builder(
+      id,
+      name,
+      duration_ms,
+      artists.map((artist) => new Artist(artist.id, artist.name)),
+    ).build();
   }
 }

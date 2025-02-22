@@ -1,3 +1,4 @@
+import { Song } from 'src/api/songs/domain/models/song.model';
 import { Playlist, PlaylistVisibility } from '../models/playlist.model';
 
 export default interface IPlaylistRepository {
@@ -26,4 +27,12 @@ export default interface IPlaylistRepository {
   ): Promise<Playlist>;
 
   delete(id: string): Promise<Playlist>;
+
+  addSong(id: string, song: Song): Promise<Playlist>;
+
+  removeSong(id: string, songId: string): Promise<Playlist>;
+
+  addCollaborator(id: string, collaboratorId: string): Promise<Playlist>;
+
+  removeCollaborator(id: string, collaboratorId: string): Promise<Playlist>;
 }

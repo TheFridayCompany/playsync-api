@@ -1,3 +1,5 @@
+import { Song } from 'src/api/songs/domain/models/song.model';
+
 export class Playlist {
   constructor(
     public id: string,
@@ -9,6 +11,7 @@ export class Playlist {
     public updatedAt: Date,
     // TODO: embedded song
     public collaboratorIds: string[] = [],
+    public songs: Song[] = [],
   ) {}
 }
 

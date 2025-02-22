@@ -4,9 +4,10 @@ import mongoose from 'mongoose';
 import IRepository from 'src/common/interfaces/repository.interface';
 import { User } from '../../domain/models/user.model';
 import { InvalidObjectIdError } from 'src/common/errors/invalid-object-id.error';
+import IUsersRepository from '../../domain/interfaces/users-repository.interface';
 
 @Injectable()
-export class UserMongooseRepository implements IRepository<User> {
+export class UserMongooseRepository implements IUsersRepository {
   constructor(
     @InjectModel(User.name) private readonly userModel: mongoose.Model<User>,
   ) {}
@@ -56,6 +57,12 @@ export class UserMongooseRepository implements IRepository<User> {
     if (!response) return false;
 
     return true;
+  }
+
+  findByUsername(usernameQuery: string): Promise<User[]> {
+    return this.userModel.find({
+      username: { $regex: `^${usernameQuery}`, $options: '' }, // case-sensitive
+    });
   }
 
   private convertToObjectId(id: string) {
