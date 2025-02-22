@@ -5,6 +5,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { FriendsModule } from './api/friends/friends.module';
 import { PlaylistsModule } from './api/playlists/playlists.module';
 import { SongsModule } from './api/songs/songs.module';
+import { AuthModule } from './api/auth/auth.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { SongsModule } from './api/songs/songs.module';
     PlaylistsModule,
     FriendsModule,
     SongsModule,
+    AuthModule,
   ],
 })
 export class AppModule {}
