@@ -1,8 +1,9 @@
-import { Controller, Post, Body, Inject, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, Inject, UseGuards, Req } from '@nestjs/common';
 import { ExchangeTokenDto } from '../dto/exchange-token.dto';
 import IAuthService from '../interfaces/auth.service.interface';
 import { SYMBOLS } from 'src/common/symbols';
 import { SocialAuthGuard } from 'src/guards/social-auth.guard';
+import { RequestWithEmail } from 'src/common/interfaces/request-with-user.interface';
 
 @Controller('auth')
 export class AuthController {
@@ -12,10 +13,9 @@ export class AuthController {
 
   @Post('exchange')
   @UseGuards(SocialAuthGuard)
-  async exchangeSocialToken(
-    @Body() exchangeTokenDto: ExchangeTokenDto,
-  ): Promise<any> {
-    const { socialToken } = exchangeTokenDto;
-    return this.authService.exchangeToken(socialToken);
+  async exchangeSocialToken(@Req() request: RequestWithEmail): Promise<any> {
+    const { email } = request.user;
+    console.log(JSON.stringify(email));
+    return this.authService.exchangeToken(email);
   }
 }

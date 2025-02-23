@@ -7,11 +7,13 @@ import {
   Param,
   Post,
   Query,
+  Req,
 } from '@nestjs/common';
 import CreateUserDto from '../dto/create-user.dto';
 import { IUsersService } from '../interfaces/users.service.interface';
 import { SYMBOLS } from 'src/common/symbols';
 import IUsersSearchService from '../interfaces/users-search.service.interface';
+import { RequestWithEmail } from 'src/common/interfaces/request-with-user.interface';
 
 @Controller('users')
 export class UsersController {
@@ -23,10 +25,14 @@ export class UsersController {
   ) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
+  create(
+    @Req() request: RequestWithEmail,
+    @Body() createUserDto: CreateUserDto,
+  ) {
     const { username, name } = createUserDto;
+    const { user } = request;
 
-    return this.usersService.createUser(username, name);
+    return this.usersService.createUser(username, name, user.email);
   }
 
   @Get(':id')

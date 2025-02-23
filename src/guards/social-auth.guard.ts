@@ -32,18 +32,20 @@ export class SocialAuthGuard extends AuthGuard('jwt') implements CanActivate {
     const token = this.extractTokenFromHeader(request);
 
     if (!token) {
-      throw new UnauthorizedException('No token provided');
+      throw new UnauthorizedException('No social token provided');
     }
 
     try {
       const decodeToken = await this.socialTokenService.decodeToken(token);
+
+      console.log('decoded token: ' + JSON.stringify(decodeToken));
 
       if (!decodeToken) {
         throw new UnauthorizedException('Could not decode token');
       }
 
       // Clearing the body and attaching the token as socialToken
-      request.body = { socialToken: token };
+      request.user = { email: decodeToken.uniqueSocialIdentifier };
     } catch (e) {
       throw new UnauthorizedException('Invalid token');
     }

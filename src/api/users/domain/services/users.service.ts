@@ -13,14 +13,18 @@ export class UsersService implements IUsersService {
     private readonly userRepository: IRepository<User>,
   ) {}
 
-  async createUser(username: string, name: string): Promise<User> {
+  async createUser(
+    username: string,
+    name: string,
+    email: string,
+  ): Promise<User> {
     // TODO: check if username is already taken using a bloom filter; if it is, throw an error
 
     // generate a unique id
     const id = generateUniqueId();
 
     // create a new user object
-    const user = new User(id, username, name);
+    const user = new User(id, username, name, email);
 
     // persist user object in the database
     return this.userRepository.create(user);

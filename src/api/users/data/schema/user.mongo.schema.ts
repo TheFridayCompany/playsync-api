@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 export const UserSchema = new mongoose.Schema({
   name: { type: String, required: true },
   username: { type: String, required: true, unique: true, index: true },
+  email: { type: String, required: true, unique: true, index: true },
   playlists: { type: [mongoose.Types.ObjectId], ref: 'Playlist' },
   collaboratingPlaylists: {
     type: [mongoose.Types.ObjectId],
@@ -14,6 +15,7 @@ export interface IUserModel {
   id: string;
   name: string;
   username: string;
+  email: string;
   playlists: mongoose.Types.ObjectId[];
   collaboratingPlaylists: mongoose.Types.ObjectId[];
 }

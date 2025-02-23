@@ -15,7 +15,7 @@ export interface IUsersService {
    * @returns {Promise<User>} The newly created user.
    * @throws {UsernameTakenError} If the username is already taken.
    */
-  createUser(username: string, name: string): Promise<User>;
+  createUser(username: string, name: string, email: string): Promise<User>;
 
   /**
    * Deletes the user with the given id.

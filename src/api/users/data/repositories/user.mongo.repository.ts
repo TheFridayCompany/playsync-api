@@ -83,6 +83,7 @@ export class UserMongooseRepository implements IUsersRepository {
       userDocument._id.toString(),
       userDocument.name,
       userDocument.username,
+      userDocument.email,
     );
   }
 }

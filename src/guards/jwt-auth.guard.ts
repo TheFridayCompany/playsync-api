@@ -8,7 +8,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
-import jwt from 'jsonwebtoken';
+import * as jwt from 'jsonwebtoken';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') implements CanActivate {
@@ -28,6 +28,13 @@ export class JwtAuthGuard extends AuthGuard('jwt') implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
 
+    console.log(request.path);
+
+    // Allow requests to /auth/exchange without authentication
+    if (request.path === '/auth/exchange') {
+      return true;
+    }
+
     const jwtSecret: string | undefined =
       this.configService.get<string>('JWT_SECRET_KEY');
 
@@ -37,14 +44,16 @@ export class JwtAuthGuard extends AuthGuard('jwt') implements CanActivate {
 
     const token = this.extractTokenFromHeader(request);
 
+    console.log('token in jwt auth guard: ' + token);
+
     if (!token) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('No token found in headers');
     }
 
     try {
       const decodedToken = jwt.verify(token, jwtSecret);
       console.log(JSON.stringify(decodedToken));
-      //   request.user = { email: decodedToken.email };
+      request.user = { email: decodedToken['uniqueSocialIdentifier'] };
     } catch (e) {
       console.error(e);
       throw new UnauthorizedException();

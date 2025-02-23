@@ -6,6 +6,8 @@ import { FriendsModule } from './api/friends/friends.module';
 import { PlaylistsModule } from './api/playlists/playlists.module';
 import { SongsModule } from './api/songs/songs.module';
 import { AuthModule } from './api/auth/auth.module';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @Module({
   imports: [
@@ -23,5 +25,6 @@ import { AuthModule } from './api/auth/auth.module';
     SongsModule,
     AuthModule,
   ],
+  providers: [{ provide: APP_GUARD, useClass: JwtAuthGuard }],
 })
 export class AppModule {}
