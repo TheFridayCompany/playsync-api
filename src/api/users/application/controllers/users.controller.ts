@@ -4,7 +4,6 @@ import {
   Delete,
   Get,
   Inject,
-  Param,
   Post,
   Query,
   Req,

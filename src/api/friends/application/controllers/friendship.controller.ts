@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Inject,
-  Param,
-  Req,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Inject, Req } from '@nestjs/common';
 import { SYMBOLS } from 'src/common/symbols';
 import IFriendshipService from '../interfaces/friendship.service.interface';
 import RemoveFriendDto from '../dto/remove-friend.dto';
