@@ -1,12 +1,11 @@
-import { Body, Controller, Delete, Inject, Param, Post } from '@nestjs/common';
+import { Controller, Delete, Inject, Param, Post, Req } from '@nestjs/common';
 import { SYMBOLS } from 'src/common/symbols';
 import IPlaylistSongsService from '../interfaces/playlist-songs.service.interface';
 import { IUsersService } from 'src/api/users/application/interfaces/users.service.interface';
+import { RequestWithEmail } from 'src/common/interfaces/request-with-user.interface';
 
 @Controller('playlists')
 export class PlaylistSongsController {
-  private readonly userId: string = '67aab02f833f69d4e6bf7d23'; // id for rohanddave username
-
   constructor(
     @Inject(SYMBOLS.USERS_SERVICE) private readonly usersService: IUsersService,
     @Inject(SYMBOLS.PLAYLIST_SONGS_SERVICE)
@@ -15,21 +14,24 @@ export class PlaylistSongsController {
 
   @Post(':playlistId/song/:songId')
   async addSongToPlaylist(
+    @Req() request: RequestWithEmail,
     @Param('playlistId') playlistId: string,
     @Param('songId') songId: string,
   ) {
-    const user = await this.usersService.getUser(this.userId);
+    const { email } = request.user;
+    const user = await this.usersService.getUserByEmail(email);
 
-    console.log(songId);
     return this.playlistSongService.forUser(user).addSong(playlistId, songId);
   }
 
   @Delete(':playlistId/song/:songId')
   async removeSongFromPlaylist(
+    @Req() request: RequestWithEmail,
     @Param('playlistId') playlistId: string,
     @Param('songId') songId: string,
   ) {
-    const user = await this.usersService.getUser(this.userId);
+    const { email } = request.user;
+    const user = await this.usersService.getUserByEmail(email);
 
     return this.playlistSongService
       .forUser(user)

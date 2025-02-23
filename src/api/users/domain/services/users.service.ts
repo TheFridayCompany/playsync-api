@@ -1,17 +1,28 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { User } from '../models/user.model';
 import { IUsersService } from '../../application/interfaces/users.service.interface';
-import IRepository from 'src/common/interfaces/repository.interface';
+// import IRepository from 'src/common/interfaces/repository.interface';
 import { SYMBOLS } from 'src/common/symbols';
 import { UserNotFoundError } from 'src/common/errors/user-not-found.error';
 import { generateUniqueId } from 'src/common/utils';
+import IUsersRepository from '../interfaces/users-repository.interface';
 
 @Injectable()
 export class UsersService implements IUsersService {
   constructor(
     @Inject(SYMBOLS.USERS_REPOSITORY)
-    private readonly userRepository: IRepository<User>,
+    private readonly userRepository: IUsersRepository,
   ) {}
+
+  async getUserByEmail(email: string): Promise<User> {
+    const user = await this.userRepository.findByEmail(email);
+
+    if (!user) {
+      throw new UserNotFoundError();
+    }
+
+    return user;
+  }
 
   async createUser(
     username: string,

@@ -5,9 +5,4 @@ export default class SendFriendRequestDto {
   @IsNotEmpty()
   @Length(24, 24)
   receiverId: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @Length(24, 24)
-  senderId: string;
 }

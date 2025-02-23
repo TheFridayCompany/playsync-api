@@ -35,9 +35,11 @@ export class UsersController {
     return this.usersService.createUser(username, name, user.email);
   }
 
-  @Get(':id')
-  getUser(@Param('id') id: string) {
-    return this.usersService.getUser(id);
+  @Get()
+  getUser(@Req() request: RequestWithEmail) {
+    const { email } = request.user;
+
+    return this.usersService.getUserByEmail(email);
   }
 
   @Get()
@@ -45,8 +47,10 @@ export class UsersController {
     return this.usersSearchService.searchByUsername(usernameQuery.trim());
   }
 
-  @Delete(':id')
-  deleteUser(@Param('id') id: string) {
-    return this.usersService.deleteUser(id);
+  @Delete()
+  async deleteUser(@Req() request: RequestWithEmail) {
+    const { user: u } = request;
+    const user = await this.usersService.getUserByEmail(u.email);
+    return this.usersService.deleteUser(user.id);
   }
 }

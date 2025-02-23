@@ -38,4 +38,6 @@ export interface IUsersService {
    * @throws {UserNotFoundError} If the user with the given id does not exist.
    */
   getUser(id: string): Promise<User>;
+
+  getUserByEmail(email: string): Promise<User>;
 }

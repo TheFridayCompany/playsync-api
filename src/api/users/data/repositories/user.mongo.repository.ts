@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
-import IRepository from 'src/common/interfaces/repository.interface';
 import { User } from '../../domain/models/user.model';
 import { InvalidObjectIdError } from 'src/common/errors/invalid-object-id.error';
 import IUsersRepository from '../../domain/interfaces/users-repository.interface';
@@ -11,6 +10,12 @@ export class UserMongooseRepository implements IUsersRepository {
   constructor(
     @InjectModel(User.name) private readonly userModel: mongoose.Model<User>,
   ) {}
+
+  findByEmail(email: string): Promise<User> {
+    return this.userModel.findOne({
+      email,
+    });
+  }
 
   async create(data: User): Promise<User> {
     const user = new this.userModel(data);

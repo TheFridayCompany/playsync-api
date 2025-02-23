@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersService } from './users.service';
 import IRepository from 'src/common/interfaces/repository.interface';
-import { IUniqueIdService } from 'src/common/interfaces/unique-id.service.interface';
 import { User } from '../models/user.model';
 import { SYMBOLS } from 'src/common/symbols';
 import { UserNotFoundError } from 'src/common/errors/user-not-found.error';

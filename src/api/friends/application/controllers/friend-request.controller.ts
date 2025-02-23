@@ -1,37 +1,66 @@
-import { Body, Controller, Get, Inject, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Inject,
+  Param,
+  Post,
+  Req,
+} from '@nestjs/common';
 import { SYMBOLS } from 'src/common/symbols';
 import IFriendRequestService from '../interfaces/friend-request.service.interface';
 import SendFriendRequestDto from '../dto/send-friend-request.dto';
-import AcceptFriendRequestDto from '../dto/accept-friend-request.dto';
-import RejectFriendRequestDto from '../dto/reject-friend-request.dto';
+import { RequestWithEmail } from 'src/common/interfaces/request-with-user.interface';
+import { IUsersService } from 'src/api/users/application/interfaces/users.service.interface';
 
 @Controller('friend-request')
 export class FriendRequestController {
   constructor(
     @Inject(SYMBOLS.FRIEND_REQUEST_SERVICE)
     private readonly friendRequestService: IFriendRequestService,
+    @Inject(SYMBOLS.USERS_SERVICE) private readonly usersService: IUsersService,
   ) {}
 
-  @Get(':userId')
-  getPendingFriendRequests(@Param('userId') id: string) {
-    return this.friendRequestService.getPendingFriendRequests(id);
+  @Get()
+  async getPendingFriendRequests(@Req() request: RequestWithEmail) {
+    const { email } = request.user;
+    const user = await this.usersService.getUserByEmail(email);
+
+    return this.friendRequestService.getPendingFriendRequests(user.id);
   }
 
   @Post()
-  sendRequest(@Body() data: SendFriendRequestDto) {
-    const { senderId, receiverId } = data;
-    return this.friendRequestService.sendRequest(receiverId, senderId);
+  async sendRequest(
+    @Req() request: RequestWithEmail,
+    @Body() data: SendFriendRequestDto,
+  ) {
+    const { email } = request.user;
+    const user = await this.usersService.getUserByEmail(email);
+
+    const { receiverId } = data;
+
+    return this.friendRequestService.sendRequest(receiverId, user.id);
   }
 
   @Post(':id/accept')
-  acceptRequest(@Param('id') id: string, @Body() data: AcceptFriendRequestDto) {
-    const { receiverId } = data;
-    return this.friendRequestService.acceptRequest(id, receiverId);
+  async acceptRequest(
+    @Param('id') id: string,
+    @Req() request: RequestWithEmail,
+  ) {
+    const { email } = request.user;
+    const user = await this.usersService.getUserByEmail(email);
+
+    return this.friendRequestService.acceptRequest(id, user.id);
   }
 
   @Post(':id/reject')
-  rejectRequest(@Param('id') id: string, @Body() data: RejectFriendRequestDto) {
-    const { receiverId } = data;
-    return this.friendRequestService.rejectRequest(id, receiverId);
+  async rejectRequest(
+    @Param('id') id: string,
+    @Req() request: RequestWithEmail,
+  ) {
+    const { email } = request.user;
+    const user = await this.usersService.getUserByEmail(email);
+
+    return this.friendRequestService.rejectRequest(id, user.id);
   }
 }

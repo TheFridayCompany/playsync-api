@@ -5,9 +5,4 @@ export default class RemoveFriendDto {
   @IsNotEmpty()
   @Length(24, 24)
   friendId: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @Length(24, 24)
-  userId: string;
 }
