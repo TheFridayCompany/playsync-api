@@ -5,6 +5,7 @@ import { User } from 'src/api/users/domain/models/user.model';
 import IFriendshipRepository from '../interfaces/friendship.repository.interface';
 import { FriendNotFoundError } from 'src/common/errors/friend-not-found.error';
 import { CannotFriendSelf } from 'src/common/errors/cannot-friend-self.error';
+import { Friendship } from '../models/friendship.model';
 
 @Injectable()
 export class FriendshipService implements IFriendshipService {
@@ -31,7 +32,7 @@ export class FriendshipService implements IFriendshipService {
     return this.friendshipRepository.add(userId, friendId);
   }
 
-  getFriends(userId: string): Promise<User[]> {
+  getFriends(userId: string): Promise<Friendship[]> {
     return this.friendshipRepository.getForUser(userId);
   }
 

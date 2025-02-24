@@ -8,7 +8,7 @@ import { generateJwtToken } from 'src/common/utils';
 export default class AuthService implements IAuthService {
   constructor(private readonly configService: ConfigService) {}
 
-  async exchangeToken(email: string): Promise<any> {
+  async exchangeToken(email: string): Promise<{ token: string }> {
     return {
       token: generateJwtToken(
         { email },

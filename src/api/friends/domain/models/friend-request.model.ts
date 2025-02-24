@@ -1,11 +1,35 @@
+/**
+ * Represents a Friend Request in the system.
+ */
 export class FriendRequest {
+  /** The unique identifier of the friend request. */
   id: string;
+
+  /** The user who sent the friend request. */
   sender: string;
+
+  /** The user who received the friend request. */
   receiver: string;
+
+  /** The current status of the friend request (e.g., "pending", "accepted", "rejected"). */
   status: string;
+
+  /** The timestamp when the friend request was created. */
   createdAt: Date;
+
+  /** The timestamp when the friend request was last updated. */
   updatedAt: Date;
 
+  /**
+   * Creates a new instance of the FriendRequest class.
+   *
+   * @param {string} id - The unique identifier for the friend request.
+   * @param {string} sender - The ID of the user sending the friend request.
+   * @param {string} receiver - The ID of the user receiving the friend request.
+   * @param {string} [status="pending"] - The current status of the friend request.
+   * @param {Date} [createdAt=new Date()] - The timestamp when the friend request was created.
+   * @param {Date} [updatedAt=new Date()] - The timestamp when the friend request was last updated.
+   */
   constructor(
     id: string,
     sender: string,

@@ -2,16 +2,12 @@ import {
   BadRequestException,
   CanActivate,
   ExecutionContext,
-  // Inject,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-// import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 import * as jwt from 'jsonwebtoken';
-// import { IUsersService } from 'src/api/users/application/interfaces/users.service.interface';
-// import { SYMBOLS } from 'src/common/symbols';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') implements CanActivate {

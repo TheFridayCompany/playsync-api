@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Inject, UseGuards, Req } from '@nestjs/common';
+import { Controller, Post, Inject, UseGuards, Req } from '@nestjs/common';
 import IAuthService from '../interfaces/auth.service.interface';
 import { SYMBOLS } from 'src/common/symbols';
 import { SocialAuthGuard } from 'src/guards/social-auth.guard';
