@@ -11,7 +11,7 @@ export class SongSearchController {
   ) {}
 
   @Get()
-  getUser(@Query() dto: SongSearchDto) {
+  getSongs(@Query() dto: SongSearchDto) {
     const { query } = dto;
     const processedQuery = query.trim().replaceAll(' ', '+');
     return this.songSearchService.search(processedQuery);
