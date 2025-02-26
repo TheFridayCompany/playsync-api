@@ -11,10 +11,11 @@ export class UserMongooseRepository implements IUsersRepository {
     @InjectModel(User.name) private readonly userModel: mongoose.Model<User>,
   ) {}
 
-  findByEmail(email: string): Promise<User> {
-    return this.userModel.findOne({
+  async findByEmail(email: string): Promise<User> {
+    const response = await this.userModel.findOne({
       email,
     });
+    return this.toUserObject(response);
   }
 
   async create(data: User): Promise<User> {
