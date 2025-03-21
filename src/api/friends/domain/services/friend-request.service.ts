@@ -80,7 +80,7 @@ export class FriendRequestService implements IFriendRequestService {
     console.log('finished updating friend request');
 
     try {
-      await this.friendshipService.addFriend(userId, friendRequest.sender);
+      await this.friendshipService.addFriend(userId, friendRequest.sender.id);
     } catch (e) {
       console.error('error adding friend; rolling back friend request status');
       console.error(e);
@@ -93,7 +93,7 @@ export class FriendRequestService implements IFriendRequestService {
     }
 
     // TODO: return user somehow
-    return null;
+    return this.usersService.getUser(friendRequest.sender.id);
   }
 
   async rejectRequest(requestId: string, userId: string): Promise<User> {
@@ -108,7 +108,7 @@ export class FriendRequestService implements IFriendRequestService {
     await this.checkStatusAndUpdate(friendRequest, userId, 'rejected');
 
     // TODO: return user somehow
-    return null;
+    return this.usersService.getUser(friendRequest.sender.id);
   }
 
   private async findFriendRequestAndThrowErrorIfNotFound(

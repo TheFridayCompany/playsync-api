@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
 import { FriendRequest } from '../../domain/models/friend-request.model';
@@ -8,6 +8,8 @@ import {
   convertStringIdToMongooseObjectId,
   convertMongooseObjectIdToString,
 } from 'src/common/utils';
+import { IUsersService } from 'src/api/users/application/interfaces/users.service.interface';
+import { SYMBOLS } from 'src/common/symbols';
 
 export interface IFriendRequestMongoRepository
   extends IFriendRequestRepository {}
@@ -19,6 +21,8 @@ export class FriendRequestMongoRepository
   constructor(
     @InjectModel(FriendRequest.name)
     private readonly friendRequestModel: mongoose.Model<IFriendRequest>,
+    @Inject(SYMBOLS.USERS_SERVICE)
+    private readonly usersService: IUsersService,
   ) {}
 
   async findOne(
@@ -103,15 +107,26 @@ export class FriendRequestMongoRepository
       .find({ receiver: convertStringIdToMongooseObjectId(userId), status })
       .exec();
 
-    return friendRequestModels.map((model) => this.toDomain(model));
+    return Promise.all(
+      friendRequestModels.map((model) => this.toDomain(model)),
+    );
   }
 
-  private toDomain(friendRequest: IFriendRequest): FriendRequest {
-    const { _id, sender, receiver, status, createdAt, updatedAt } =
-      friendRequest;
+  private async toDomain(
+    friendRequest: IFriendRequest,
+  ): Promise<FriendRequest> {
+    const {
+      _id,
+      sender: senderId,
+      receiver,
+      status,
+      createdAt,
+      updatedAt,
+    } = friendRequest;
+    const sender = await this.usersService.getUser(senderId.toString());
     return new FriendRequest(
       convertMongooseObjectIdToString(_id),
-      convertMongooseObjectIdToString(sender),
+      sender,
       convertMongooseObjectIdToString(receiver),
       status,
       createdAt,

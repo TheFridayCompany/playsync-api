@@ -1,3 +1,4 @@
+import { User } from 'src/api/users/domain/models/user.model';
 import { Friendship } from '../models/friendship.model';
 
 /**
@@ -11,7 +12,7 @@ export default interface IFriendshipRepository {
    * @param {string} userId - The ID of the user whose friendships are being retrieved.
    * @returns {Promise<Friendship[]>} - A promise that resolves to an array of friendships.
    */
-  getForUser(userId: string): Promise<Friendship[]>;
+  getForUser(userId: string): Promise<User[]>;
 
   /**
    * Removes a friendship between two users.

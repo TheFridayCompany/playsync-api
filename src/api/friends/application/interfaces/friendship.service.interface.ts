@@ -1,4 +1,4 @@
-import { Friendship } from '../../domain/models/friendship.model';
+import { User } from 'src/api/users/domain/models/user.model';
 
 /**
  * Interface for Friendship Service that provides methods to manage friendships between users.
@@ -8,9 +8,9 @@ export default interface IFriendshipService {
    * Retrieves the list of friends for a given user.
    *
    * @param {string} userId - The ID of the user whose friends are being fetched.
-   * @returns {Promise<Friendship[]>} - A promise that resolves to an array of Friendship objects.
+   * @returns {Promise<User[]>} - A promise that resolves to an array of Friendship objects.
    */
-  getFriends(userId: string): Promise<Friendship[]>;
+  getFriends(userId: string): Promise<User[]>;
 
   /**
    * Removes a friend from a user's friend list.

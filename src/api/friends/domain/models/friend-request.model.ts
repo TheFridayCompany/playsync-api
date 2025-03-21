@@ -1,3 +1,5 @@
+import { User } from 'src/api/users/domain/models/user.model';
+
 /**
  * Represents a Friend Request in the system.
  */
@@ -6,7 +8,7 @@ export class FriendRequest {
   id: string;
 
   /** The user who sent the friend request. */
-  sender: string;
+  sender: User;
 
   /** The user who received the friend request. */
   receiver: string;
@@ -24,7 +26,7 @@ export class FriendRequest {
    * Creates a new instance of the FriendRequest class.
    *
    * @param {string} id - The unique identifier for the friend request.
-   * @param {string} sender - The ID of the user sending the friend request.
+   * @param {User} sender - The user sending the friend request.
    * @param {string} receiver - The ID of the user receiving the friend request.
    * @param {string} [status="pending"] - The current status of the friend request.
    * @param {Date} [createdAt=new Date()] - The timestamp when the friend request was created.
@@ -32,7 +34,7 @@ export class FriendRequest {
    */
   constructor(
     id: string,
-    sender: string,
+    sender: User,
     receiver: string,
     status: string = 'pending',
     createdAt: Date = new Date(),
