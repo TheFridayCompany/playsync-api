@@ -36,7 +36,9 @@ export class UsersController {
 
   @Get()
   getUser(@Req() request: RequestWithEmail) {
+    console.log(JSON.stringify(request.user));
     const { email } = request.user;
+    console.log('inside controller: ', email);
 
     return this.usersService.getUserByEmail(email);
   }

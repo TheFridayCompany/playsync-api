@@ -52,7 +52,10 @@ export class JwtAuthGuard extends AuthGuard('jwt') implements CanActivate {
     try {
       const decodedToken = jwt.verify(token, jwtSecret);
       console.log(JSON.stringify(decodedToken));
-      request.user = { email: decodedToken['uniqueSocialIdentifier'] };
+      request.user = {
+        email: decodedToken['uniqueSocialIdentifier'] || decodedToken['email'],
+      };
+      return true;
       // const user = await this.usersService.getUserByEmail(
       //   decodedToken['uniqueSocialIdentifier'],
       // );
@@ -61,7 +64,6 @@ export class JwtAuthGuard extends AuthGuard('jwt') implements CanActivate {
       console.error(e);
       throw new UnauthorizedException();
     }
-    return true;
   }
 
   /**

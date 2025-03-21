@@ -1,6 +1,5 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import IAuthService from '../../application/interfaces/auth.service.interface';
-import { SYMBOLS } from 'src/common/symbols';
 import { ConfigService } from '@nestjs/config';
 import { generateJwtToken } from 'src/common/utils';
 

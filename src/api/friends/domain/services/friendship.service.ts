@@ -4,7 +4,6 @@ import IFriendshipService from '../../application/interfaces/friendship.service.
 import IFriendshipRepository from '../interfaces/friendship.repository.interface';
 import { FriendNotFoundError } from 'src/common/errors/friend-not-found.error';
 import { CannotFriendSelf } from 'src/common/errors/cannot-friend-self.error';
-import { Friendship } from '../models/friendship.model';
 import { User } from 'src/api/users/domain/models/user.model';
 
 @Injectable()
