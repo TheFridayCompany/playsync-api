@@ -74,8 +74,8 @@ export class FriendRequestMongoRepository
     status: string = 'pending',
   ): Promise<FriendRequest> {
     const response = await this.friendRequestModel.create({
-      receiver: convertStringIdToMongooseObjectId(senderId),
-      sender: convertStringIdToMongooseObjectId(receiverId),
+      receiver: convertStringIdToMongooseObjectId(receiverId),
+      sender: convertStringIdToMongooseObjectId(senderId),
       status,
     });
 
@@ -104,7 +104,17 @@ export class FriendRequestMongoRepository
     status: string = 'pending',
   ): Promise<FriendRequest[]> {
     const friendRequestModels = await this.friendRequestModel
-      .find({ receiver: convertStringIdToMongooseObjectId(userId), status })
+      .find({
+        $or: [
+          {
+            receiver: convertStringIdToMongooseObjectId(userId),
+          },
+          {
+            sender: convertStringIdToMongooseObjectId(userId),
+          },
+        ],
+        status,
+      })
       .exec();
 
     return Promise.all(
