@@ -11,10 +11,7 @@ import * as jwt from 'jsonwebtoken';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') implements CanActivate {
-  constructor(
-    private readonly configService: ConfigService,
-    // @Inject(SYMBOLS.USERS_SERVICE) private readonly usersService: IUsersService,
-  ) {
+  constructor(private readonly configService: ConfigService) {
     super();
   }
 

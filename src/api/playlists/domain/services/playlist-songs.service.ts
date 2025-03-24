@@ -66,9 +66,9 @@ export default class PlaylistSongsService implements IPlaylistSongsService {
 
     const song = await this.songSearchService.findOneById(songId);
 
-    console.log('found song to be added');
+    console.log('found song to be removed');
     console.log(JSON.stringify(song));
 
-    return this.playlistRepository.removeSong(id, songId);
+    return this.playlistRepository.removeSong(playlist.id, songId);
   }
 }
