@@ -43,9 +43,16 @@ export class UsersController {
     return this.usersService.getUserByEmail(email);
   }
 
-  @Get()
-  getUsersByUsername(@Query('username') usernameQuery: string) {
-    return this.usersSearchService.searchByUsername(usernameQuery.trim());
+  @Get('/search')
+  async getUsersByUsername(
+    @Req() request: RequestWithEmail,
+    @Query('username') usernameQuery: string,
+  ) {
+    const { user: u } = request;
+    const user = await this.usersService.getUserByEmail(u.email);
+    return this.usersSearchService
+      .forUser(user)
+      .searchByUsername(usernameQuery.trim());
   }
 
   @Delete()

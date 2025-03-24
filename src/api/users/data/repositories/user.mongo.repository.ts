@@ -65,10 +65,14 @@ export class UserMongooseRepository implements IUsersRepository {
     return true;
   }
 
-  findByUsername(usernameQuery: string): Promise<User[]> {
-    return this.userModel.find({
+  async findByUsername(usernameQuery: string): Promise<User[]> {
+    const response = await this.userModel.find({
       username: { $regex: `^${usernameQuery}`, $options: '' }, // case-sensitive
     });
+
+    console.log('PRINTING RESPONSE');
+    console.log(response);
+    return response.map((user) => this.toUserObject(user));
   }
 
   private convertToObjectId(id: string) {

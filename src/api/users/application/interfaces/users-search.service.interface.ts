@@ -6,6 +6,7 @@ import { User } from '../../domain/models/user.model';
  * This service provides a method to search users based on their username.
  */
 export default interface IUsersSearchService {
+  forUser(user: User): IUsersSearchService;
   /**
    * Searches for users based on a username query.
    *
