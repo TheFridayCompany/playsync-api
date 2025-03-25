@@ -51,8 +51,8 @@ export class FriendshipService implements IFriendshipService {
     const response = await this.friendshipRepository.remove(userId, friendId);
 
     await Promise.all([
-      this.eventEmitter.emitAsync('friend.removed', { userId, friendId }),
-      this.eventEmitter.emitAsync('friend.removed', { friendId, userId }),
+      this.eventEmitter.emitAsync('friend.removed', userId, friendId),
+      this.eventEmitter.emitAsync('friend.removed', friendId, userId),
     ]);
 
     return response;
