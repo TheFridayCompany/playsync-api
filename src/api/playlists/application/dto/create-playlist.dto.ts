@@ -27,7 +27,7 @@ export default class CreatePlaylistDto {
    */
   @IsString()
   @IsNotEmpty()
-  @Length(3, 20)
+  @Length(3, 100)
   name: string;
 
   /**
@@ -39,9 +39,9 @@ export default class CreatePlaylistDto {
    * @type {string}
    * @memberof CreatePlaylistDto
    */
-  @IsString()
   @IsOptional()
-  @Length(6, 20)
+  @IsString()
+  @Length(6, 200)
   description?: string;
 
   /**

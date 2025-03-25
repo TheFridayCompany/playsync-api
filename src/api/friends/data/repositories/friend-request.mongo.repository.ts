@@ -128,16 +128,17 @@ export class FriendRequestMongoRepository
     const {
       _id,
       sender: senderId,
-      receiver,
+      receiver: receiverId,
       status,
       createdAt,
       updatedAt,
     } = friendRequest;
     const sender = await this.usersService.getUser(senderId.toString());
+    const receiver = await this.usersService.getUser(receiverId.toString());
     return new FriendRequest(
       convertMongooseObjectIdToString(_id),
       sender,
-      convertMongooseObjectIdToString(receiver),
+      receiver,
       status,
       createdAt,
       updatedAt,

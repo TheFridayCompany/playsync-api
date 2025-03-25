@@ -131,7 +131,7 @@ export class FriendRequestService implements IFriendRequestService {
     status: string,
   ): Promise<FriendRequest> {
     // throw error if accepting user is not the receiver
-    if (friendRequest.receiver !== userId) {
+    if (friendRequest.receiver.id !== userId) {
       throw new UnauthorizedException(
         "You can't accept or reject a friend request that is not addressed to you",
       );
