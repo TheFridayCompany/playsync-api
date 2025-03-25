@@ -165,11 +165,11 @@ export default class PlaylistsService implements IPlaylistsService {
       throw new PlaylistNotFoundError(id);
     }
 
-    // if playlist is private and the requesting user is not the creator or not a collaborator; throw UnauthorizedException
+    // if playlist is private and the requesting user is not the creator and not a collaborator; throw UnauthorizedException
     if (
       playlist.visibility == PlaylistVisibility.PRIVATE &&
-      (playlist.userId !== this.user.id ||
-        !playlist.collaboratorIds.includes(this.user.id))
+      playlist.userId !== this.user.id &&
+      !playlist.collaboratorIds.includes(this.user.id)
     ) {
       throw new UnauthorizedException(
         'You do not have access to this playlist',
