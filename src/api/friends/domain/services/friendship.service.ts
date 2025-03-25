@@ -5,12 +5,14 @@ import IFriendshipRepository from '../interfaces/friendship.repository.interface
 import { FriendNotFoundError } from 'src/common/errors/friend-not-found.error';
 import { CannotFriendSelf } from 'src/common/errors/cannot-friend-self.error';
 import { User } from 'src/api/users/domain/models/user.model';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()
 export class FriendshipService implements IFriendshipService {
   constructor(
     @Inject(SYMBOLS.FRIENDSHIP_REPOSITORY)
     private readonly friendshipRepository: IFriendshipRepository,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   async checkFriendshipStatus(
@@ -46,7 +48,13 @@ export class FriendshipService implements IFriendshipService {
       throw new FriendNotFoundError(friendId);
     }
 
-    // delete friend
-    return this.friendshipRepository.remove(userId, friendId);
+    const response = await this.friendshipRepository.remove(userId, friendId);
+
+    await Promise.all([
+      this.eventEmitter.emitAsync('friend.removed', { userId, friendId }),
+      this.eventEmitter.emitAsync('friend.removed', { friendId, userId }),
+    ]);
+
+    return response;
   }
 }

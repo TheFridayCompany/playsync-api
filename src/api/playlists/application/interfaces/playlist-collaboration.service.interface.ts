@@ -25,5 +25,10 @@ export default interface IPlaylistCollaborationService {
     collaboratorId: string,
   ): Promise<void>;
 
-  getCollaborators(id: string, ownerId: string): Promise<User[]>;
+  getCollaborators(id: string, requestingUserId: string): Promise<User[]>;
+
+  removeUserFromCollaboratorsForOwner(
+    ownerId: string,
+    friendId: string,
+  ): Promise<void>;
 }

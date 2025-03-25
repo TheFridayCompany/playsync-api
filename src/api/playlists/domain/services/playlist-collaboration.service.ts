@@ -12,6 +12,7 @@ import { CollaboratorNotFoundError } from 'src/common/errors/no-such-collaborato
 import { CollaboratorAlreadyExistsError } from 'src/common/errors/collaborator-already-exists.error';
 import { User } from 'src/api/users/domain/models/user.model';
 import { IUsersService } from 'src/api/users/application/interfaces/users.service.interface';
+import { OnEvent } from '@nestjs/event-emitter';
 
 @Injectable()
 export default class PlaylistCollaborationService
@@ -33,14 +34,38 @@ export default class PlaylistCollaborationService
     );
   }
 
-  async getCollaborators(id: string, ownerId: string): Promise<User[]> {
+  @OnEvent('friend.removed')
+  async removeUserFromCollaboratorsForOwner(ownerId: string, friendId: string) {
+    const owner = await this.usersService.getUser(ownerId);
+
+    const ownerPlaylists = await this.playlistsRepository.findForUser(
+      ownerId,
+      false,
+    );
+
+    const friendCollaboratingPlaylists = ownerPlaylists.filter((playlist) =>
+      playlist.collaboratorIds.includes(friendId),
+    );
+
+    await Promise.all(
+      friendCollaboratingPlaylists.map((playlist) => {
+        return this.removeCollaborator(playlist.id, owner.id, friendId);
+      }),
+    );
+  }
+
+  async getCollaborators(id: string, userId: string): Promise<User[]> {
     const playlist = await this.playlistsRepository.findOneById(id);
 
     if (!playlist) {
       throw new PlaylistNotFoundError(id);
     }
 
-    if (playlist.userId !== ownerId) {
+    // throw error if the requesting user is not the owner or not a collaborator
+    if (
+      playlist.userId !== userId &&
+      !playlist.collaboratorIds.includes(userId)
+    ) {
       throw new UnauthorizedException(
         'You do not have permission to view collaborators of playlist',
       );
