@@ -68,5 +68,10 @@ export interface IUsersService {
    */
   getUserByEmail(email: string): Promise<User>;
 
+  /**
+   * Retrieves a list of users by their IDs.
+   * @param ids - An array of user IDs to fetch the corresponding users.
+   * @returns A promise that resolves with an array of `User` objects corresponding to the provided IDs.
+   */
   getUsers(ids: string[]): Promise<User[]>;
 }

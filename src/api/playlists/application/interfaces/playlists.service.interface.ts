@@ -5,6 +5,11 @@ import {
 } from '../../domain/models/playlist.model';
 
 export default interface IPlaylistsService {
+  /**
+   * Retrieves the playlist songs service instance associated with the user.
+   * @param user - The user whose playlist songs service will be retrieved.
+   * @returns An instance of the `IPlaylistsService` for the user's playlists.
+   */
   forUser(user: User): IPlaylistsService;
 
   /**

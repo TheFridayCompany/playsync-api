@@ -2,7 +2,12 @@ import { User } from 'src/api/users/domain/models/user.model';
 import { Playlist } from '../../domain/models/playlist.model';
 
 export default interface IPlaylistSongsService {
-  forUser(user: User);
+  /**
+   * Retrieves the playlist songs service instance associated with the user.
+   * @param user - The user whose playlist songs service will be retrieved.
+   * @returns An instance of the `IPlaylistSongsService` for the user's playlists.
+   */
+  forUser(user: User): IPlaylistSongsService;
 
   /**
    * Adds a song to a playlist.

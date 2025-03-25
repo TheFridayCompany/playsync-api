@@ -14,7 +14,6 @@ export class AuthController {
   @UseGuards(SocialAuthGuard)
   async exchangeSocialToken(@Req() request: RequestWithEmail): Promise<any> {
     const { email } = request.user;
-    console.log(JSON.stringify(email));
     return this.authService.exchangeToken(email);
   }
 }

@@ -35,5 +35,10 @@ export default interface IUsersRepository extends IRepository<User> {
    */
   findByEmail(email: string): Promise<User>;
 
+  /**
+   * Retrieves a list of users based on multiple user IDs.
+   * @param ids - An array of user IDs for which the corresponding users will be fetched.
+   * @returns A promise that resolves with an array of `User` objects matching the provided IDs.
+   */
   findManyByIds(ids: string[]): Promise<User[]>;
 }

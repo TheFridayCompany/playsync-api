@@ -6,7 +6,13 @@ import { User } from '../../domain/models/user.model';
  * This service provides a method to search users based on their username.
  */
 export default interface IUsersSearchService {
+  /**
+   * Retrieves the playlist songs service instance associated with the user.
+   * @param user - The user whose playlist songs service will be retrieved.
+   * @returns An instance of the `IUsersSearchService`.
+   */
   forUser(user: User): IUsersSearchService;
+
   /**
    * Searches for users based on a username query.
    *

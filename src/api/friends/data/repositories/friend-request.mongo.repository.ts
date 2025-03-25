@@ -44,11 +44,6 @@ export class FriendRequestMongoRepository
       status,
     });
 
-    console.log(
-      'printing friend request model from repository find one method',
-    );
-    console.log(JSON.stringify(friendRequestModel));
-
     if (!friendRequestModel) {
       return null;
     }
@@ -92,9 +87,6 @@ export class FriendRequestMongoRepository
         { new: true },
       )
       .exec();
-
-    console.log('printing updated friend request model');
-    console.log(JSON.stringify(updatedFriendRequestModel));
 
     return this.toDomain(updatedFriendRequestModel);
   }
