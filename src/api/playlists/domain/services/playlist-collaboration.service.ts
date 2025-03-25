@@ -10,6 +10,8 @@ import { CannotAddNonFriendAsCollaboratorError } from 'src/common/errors/cannot-
 import { CannotAddOwnerAsCollaboratorError } from 'src/common/errors/cannot-add-owner-as-collaborator.error';
 import { CollaboratorNotFoundError } from 'src/common/errors/no-such-collaborator-found.error';
 import { CollaboratorAlreadyExistsError } from 'src/common/errors/collaborator-already-exists.error';
+import { User } from 'src/api/users/domain/models/user.model';
+import { IUsersService } from 'src/api/users/application/interfaces/users.service.interface';
 
 @Injectable()
 export default class PlaylistCollaborationService
@@ -22,11 +24,29 @@ export default class PlaylistCollaborationService
     private readonly playlistsRepository: IPlaylistRepository,
     @Inject(SYMBOLS.FRIENDSHIP_SERVICE)
     private readonly friendshipService: IFriendshipService,
+    @Inject(SYMBOLS.USERS_SERVICE)
+    private readonly usersService: IUsersService,
     private readonly configService: ConfigService,
   ) {
     this.MAX_PLAYLIST_COLLABORATORS = this.configService.get<number>(
       'MAX_PLAYLIST_COLLABORATORS',
     );
+  }
+
+  async getCollaborators(id: string, ownerId: string): Promise<User[]> {
+    const playlist = await this.playlistsRepository.findOneById(id);
+
+    if (!playlist) {
+      throw new PlaylistNotFoundError(id);
+    }
+
+    if (playlist.userId !== ownerId) {
+      throw new UnauthorizedException(
+        'You do not have permission to view collaborators of playlist',
+      );
+    }
+
+    return this.usersService.getUsers(playlist.collaboratorIds);
   }
 
   async addCollaborator(

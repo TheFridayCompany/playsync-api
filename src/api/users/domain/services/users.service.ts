@@ -13,6 +13,10 @@ export class UsersService implements IUsersService {
     private readonly userRepository: IUsersRepository,
   ) {}
 
+  getUsers(ids: string[]): Promise<User[]> {
+    return this.userRepository.findManyByIds(ids);
+  }
+
   async getUserByEmail(email: string): Promise<User> {
     const user = await this.userRepository.findByEmail(email);
 

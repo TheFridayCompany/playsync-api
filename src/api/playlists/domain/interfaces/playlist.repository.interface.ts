@@ -1,5 +1,6 @@
 import { Song } from 'src/api/songs/domain/models/song.model';
 import { Playlist, PlaylistVisibility } from '../models/playlist.model';
+import { User } from 'src/api/users/domain/models/user.model';
 
 /**
  * Interface for managing playlist-related operations in the repository layer.

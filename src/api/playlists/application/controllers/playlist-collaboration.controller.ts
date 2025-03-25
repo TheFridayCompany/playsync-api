@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Inject,
   Param,
   Post,
@@ -21,6 +22,21 @@ export class PlaylistCollaborationController {
     private readonly playlistCollaborationService: IPlaylistCollaborationService,
     @Inject(SYMBOLS.USERS_SERVICE) private readonly usersService: IUsersService,
   ) {}
+
+  @Get()
+  async getCollaborators(
+    @Req() request: RequestWithEmail,
+    @Param('playlistId') playlistId: string,
+  ) {
+    const { email } = request.user;
+
+    const user = await this.usersService.getUserByEmail(email);
+
+    return this.playlistCollaborationService.getCollaborators(
+      playlistId,
+      user.id,
+    );
+  }
 
   @Post()
   async addCollaborator(

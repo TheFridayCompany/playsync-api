@@ -11,6 +11,14 @@ export class UserMongooseRepository implements IUsersRepository {
     @InjectModel(User.name) private readonly userModel: mongoose.Model<User>,
   ) {}
 
+  async findManyByIds(ids: string[]): Promise<User[]> {
+    const response = await this.userModel.find({
+      _id: { $in: ids.map((id) => this.convertToObjectId(id)) },
+    });
+
+    return response.map((user) => this.toUserObject(user));
+  }
+
   async findByEmail(email: string): Promise<User> {
     const response = await this.userModel.findOne({
       email,

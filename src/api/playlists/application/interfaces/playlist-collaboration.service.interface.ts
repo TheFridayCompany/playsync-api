@@ -1,3 +1,5 @@
+import { User } from 'src/api/users/domain/models/user.model';
+
 export default interface IPlaylistCollaborationService {
   /**
    * Adds collaborators to a playlist.
@@ -22,4 +24,6 @@ export default interface IPlaylistCollaborationService {
     ownerId: string,
     collaboratorId: string,
   ): Promise<void>;
+
+  getCollaborators(id: string, ownerId: string): Promise<User[]>;
 }

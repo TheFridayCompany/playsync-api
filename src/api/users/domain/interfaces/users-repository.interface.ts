@@ -34,4 +34,6 @@ export default interface IUsersRepository extends IRepository<User> {
    * console.log(user); // The user with the email 'john@example.com'.
    */
   findByEmail(email: string): Promise<User>;
+
+  findManyByIds(ids: string[]): Promise<User[]>;
 }

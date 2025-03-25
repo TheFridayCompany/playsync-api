@@ -67,4 +67,6 @@ export interface IUsersService {
    * console.log(user); // The user object with the email 'john@example.com'
    */
   getUserByEmail(email: string): Promise<User>;
+
+  getUsers(ids: string[]): Promise<User[]>;
 }
