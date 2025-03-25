@@ -38,7 +38,7 @@ export class UsersService implements IUsersService {
     const id = generateUniqueId();
 
     // create a new user object
-    const user = new User(id, username, name, email);
+    const user = new User(id, name, username, email);
 
     // persist user object in the database
     return this.userRepository.create(user);
